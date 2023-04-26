@@ -77,8 +77,7 @@ public class Example3_FilterRawPackets {
 		PcapHeader header = new PcapHeader(hdr);
 
 		// MemorySegment contains packet data, accessible using new java's FF API
-		byte[] array = MemorySegment
-				.ofAddress(packet.address(), header.captureLength(), packet.session())
+		byte[] array = packet
 				.toArray(ValueLayout.JAVA_BYTE);
 
 		System.out.printf("%s: timestamp=%s, wirelen=%-4d caplen=%-4d %s%n",

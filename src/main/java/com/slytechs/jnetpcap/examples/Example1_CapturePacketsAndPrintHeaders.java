@@ -27,6 +27,7 @@ import com.slytechs.protocol.pack.core.Ethernet;
 import com.slytechs.protocol.pack.core.Ip4;
 import com.slytechs.protocol.pack.core.Ip4Option.Ip4RouterOption;
 import com.slytechs.protocol.pack.core.Tcp;
+import com.slytechs.protocol.pack.core.constants.PacketDescriptorType;
 
 /**
  * Example showing how to capture offline packets and dispatch to a user packet
@@ -62,7 +63,8 @@ public class Example1_CapturePacketsAndPrintHeaders {
 		try (PcapPro pcap = PcapPro.openOffline(PCAP_FILE)) { // Pro API
 
 			/* Set a pretty print formatter to toString() method */
-			pcap.setPacketFormatter(new PacketFormat());
+			pcap.setPacketFormatter(new PacketFormat())
+				.setDescriptorType(PacketDescriptorType.TYPE1);
 
 			/* Number of packets to capture */
 			final int PACKET_COUNT = 10;
@@ -75,6 +77,8 @@ public class Example1_CapturePacketsAndPrintHeaders {
 
 			/* Capture packets and access protocol headers */
 			pcap.dispatch(PACKET_COUNT, (String user, Packet packet) -> { // Pro API
+				
+				System.out.println(packet.descriptor());
 
 				// If present, printout ethernet header
 				if (packet.hasHeader(ethernet))

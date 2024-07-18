@@ -27,7 +27,7 @@ import com.slytechs.jnet.protocol.Packet;
  * Example showing how to capture offline packets and dispatch to a user packet
  * handler of type {@code PcapProHandler.OfPacket}.
  */
-public class Example2_PacketDescriptorTimestamp {
+public class PacketType2Descriptor {
 
 	/**
 	 * Bootstrap the example.
@@ -36,7 +36,7 @@ public class Example2_PacketDescriptorTimestamp {
 	 * @throws PcapException any pcap exceptions
 	 */
 	public static void main(String[] args) throws PcapException {
-		new Example2_PacketDescriptorTimestamp().main();
+		new PacketType2Descriptor().main();
 	}
 
 	/** Example instance */

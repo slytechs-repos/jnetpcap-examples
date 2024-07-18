@@ -20,8 +20,8 @@ package com.slytechs.jnet.jnetpcap.example;
 import org.jnetpcap.PcapException;
 
 import com.slytechs.jnet.jnetpcap.IpfReassembler;
-import com.slytechs.jnet.jnetpcap.PacketPlayer;
 import com.slytechs.jnet.jnetpcap.NetPcap;
+import com.slytechs.jnet.jnetpcap.PacketPlayer;
 import com.slytechs.jnet.jnetruntime.util.CountUnit;
 import com.slytechs.jnet.jnetruntime.util.Detail;
 import com.slytechs.jnet.jnetruntime.util.MemoryUnit;
@@ -61,16 +61,16 @@ public class Example5_IpFragmentReassembly {
 
 //		try (PcapPro pcapPro = PcapPro.openOffline(IP6_FILE)) {
 //		try (PcapPro pcapPro = PcapPro.openOffline(LAN_FILE)) {
-		try (NetPcap pcapPro = NetPcap.openOffline(IP_FRAGMENTED_FILE)) {
+		try (NetPcap pcap = NetPcap.openOffline(IP_FRAGMENTED_FILE)) {
 
-			pcapPro.installPre(PacketPlayer::new)
-					.enableIf(pcapPro.getPcapType()::isOffline)
+			pcap.installProcessor(PacketPlayer::new)
+					.enableIf(pcap.getPcapType()::isOffline)
 					.preserveIfg(true) // Preserve inter-frame-gap
 					.syncTimestamp(true) // Sync timestamp to first frame, otherwise sync to current time
 					.play(1); // 1 = preserve original inter-frame-gap, otherwise adjust it accordingly
 
 			/* Enable IP fragmentation reassembly and use many IPF options */
-			pcapPro.installPost(IpfReassembler::new)
+			pcap.installPost(IpfReassembler::new)
 					.enable(true) // Enables both IPF reassembly and tracking
 					.enableReassembly(true) // Default, but this is how you disable
 					.enableTracking(true) // Default, but this is how you disable
@@ -88,12 +88,12 @@ public class Example5_IpFragmentReassembly {
 					.setMaxDgramSize(9, MemoryUnit.KILOBYTES) // Max reassembled IP dgram size
 					.usePacketTimesource(); // vs System timesource
 
-			pcapPro
+			pcap
 //					.uninstallAll()
 					.setPacketFormatter(new PacketFormat())
 					.activate();
 
-			pcapPro.dispatch((Packet packet) -> {
+			pcap.dispatch((Packet packet) -> {
 				IpfReassembly reassemblyDesc = packet.descriptor(IpfDescriptorType.IPF_REASSEMBLY);
 
 //				System.out.println(packet.toString(Detail.HIGH));

@@ -35,7 +35,7 @@ import com.slytechs.jnet.protocol.meta.PacketFormat;
  * delivered to the user handler as packets and also drop the original
  * reassembled fragments. We are only interested in non-fragment IP datagrams.
  */
-public class Example1_CapturePacketsAndPrintHeaders {
+public class OfflineCapture {
 
 	/**
 	 * Bootstrap the example.
@@ -44,7 +44,7 @@ public class Example1_CapturePacketsAndPrintHeaders {
 	 * @throws PcapException any pcap exceptions
 	 */
 	public static void main(String[] args) throws PcapException {
-		new Example1_CapturePacketsAndPrintHeaders().main();
+		new OfflineCapture().main();
 	}
 
 	/** Example instance */

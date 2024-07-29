@@ -19,12 +19,8 @@ package com.slytechs.jnet.jnetpcap.example;
 
 import org.jnetpcap.PcapException;
 
-import com.slytechs.jnet.jnetpcap.IpfReassembler;
 import com.slytechs.jnet.jnetpcap.NetPcap;
-import com.slytechs.jnet.jnetpcap.PacketPlayer;
-import com.slytechs.jnet.jnetruntime.util.CountUnit;
 import com.slytechs.jnet.jnetruntime.util.Detail;
-import com.slytechs.jnet.jnetruntime.util.MemoryUnit;
 import com.slytechs.jnet.protocol.Packet;
 import com.slytechs.jnet.protocol.core.constants.IpfDescriptorType;
 import com.slytechs.jnet.protocol.descriptor.IpfReassembly;
@@ -63,30 +59,30 @@ public class Example5_IpFragmentReassembly {
 //		try (PcapPro pcapPro = PcapPro.openOffline(LAN_FILE)) {
 		try (NetPcap pcap = NetPcap.openOffline(IP_FRAGMENTED_FILE)) {
 
-			pcap.installProcessor(PacketPlayer::new)
-					.enableIf(pcap.getPcapType()::isOffline)
-					.preserveIfg(true) // Preserve inter-frame-gap
-					.syncTimestamp(true) // Sync timestamp to first frame, otherwise sync to current time
-					.play(1); // 1 = preserve original inter-frame-gap, otherwise adjust it accordingly
-
-			/* Enable IP fragmentation reassembly and use many IPF options */
-			pcap.installPost(IpfReassembler::new)
-					.enable(true) // Enables both IPF reassembly and tracking
-					.enableReassembly(true) // Default, but this is how you disable
-					.enableTracking(true) // Default, but this is how you disable
-					.enablePassthrough(true) // Pass through original IP fragments
-					.enableAttachComplete(true) // Attach only complete dgrams to last IPF
-					.enableAttachIncomplete(true) // Attach incomplete dgrams as well to last IPF
-					.enableSend(true) // Enable sending new IP datagrams in packet stream
-					.enableSendComplete(true) // Send new reassembled dgrams
-					.enableSendIncomplete(true) // Send new incomplete dgrams
-					.setTimeoutOnLast(true) // Otherwise only timeout on duration
-					.setBufferSize(9, MemoryUnit.MEGABYTES) // Total reassembly buffer size
-					.setTableSize(1, CountUnit.KILO) // How many hash table entries
-					.setTableMaxFragmentCount(32) // Max number of IP fragments per hash entry
-					.setTimeoutMilli(1200) // Timeout in system or packet time for incomplete dgrams
-					.setMaxDgramSize(9, MemoryUnit.KILOBYTES) // Max reassembled IP dgram size
-					.usePacketTimesource(); // vs System timesource
+//			pcap.installProcessor(PacketPlayer::new)
+//					.enableIf(pcap.getPcapType()::isOffline)
+//					.preserveIfg(true) // Preserve inter-frame-gap
+//					.syncTimestamp(true) // Sync timestamp to first frame, otherwise sync to current time
+//					.play(1); // 1 = preserve original inter-frame-gap, otherwise adjust it accordingly
+//
+//			/* Enable IP fragmentation reassembly and use many IPF options */
+//			pcap.installPost(IpfReassembler::new)
+//					.enable(true) // Enables both IPF reassembly and tracking
+//					.enableReassembly(true) // Default, but this is how you disable
+//					.enableTracking(true) // Default, but this is how you disable
+//					.enablePassthrough(true) // Pass through original IP fragments
+//					.enableAttachComplete(true) // Attach only complete dgrams to last IPF
+//					.enableAttachIncomplete(true) // Attach incomplete dgrams as well to last IPF
+//					.enableSend(true) // Enable sending new IP datagrams in packet stream
+//					.enableSendComplete(true) // Send new reassembled dgrams
+//					.enableSendIncomplete(true) // Send new incomplete dgrams
+//					.setTimeoutOnLast(true) // Otherwise only timeout on duration
+//					.setBufferSize(9, MemoryUnit.MEGABYTES) // Total reassembly buffer size
+//					.setTableSize(1, CountUnit.KILO) // How many hash table entries
+//					.setTableMaxFragmentCount(32) // Max number of IP fragments per hash entry
+//					.setTimeoutMilli(1200) // Timeout in system or packet time for incomplete dgrams
+//					.setMaxDgramSize(9, MemoryUnit.KILOBYTES) // Max reassembled IP dgram size
+//					.usePacketTimesource(); // vs System timesource
 
 			pcap
 //					.uninstallAll()

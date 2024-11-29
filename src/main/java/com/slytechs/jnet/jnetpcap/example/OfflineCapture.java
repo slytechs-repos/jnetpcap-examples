@@ -21,11 +21,11 @@ import org.jnetpcap.PcapException;
 
 import com.slytechs.jnet.jnetpcap.NetPcap;
 import com.slytechs.jnet.protocol.Packet;
-import com.slytechs.jnet.protocol.core.Ethernet;
-import com.slytechs.jnet.protocol.core.Ip4;
-import com.slytechs.jnet.protocol.core.Ip4tRouterAlertOption;
-import com.slytechs.jnet.protocol.core.Tcp;
 import com.slytechs.jnet.protocol.core.constants.PacketDescriptorType;
+import com.slytechs.jnet.protocol.core.link.Ethernet;
+import com.slytechs.jnet.protocol.core.network.Ip4;
+import com.slytechs.jnet.protocol.core.network.Ip4RouterAlertOption;
+import com.slytechs.jnet.protocol.core.transport.Tcp;
 import com.slytechs.jnet.protocol.meta.PacketFormat;
 
 /**
@@ -70,7 +70,7 @@ public class OfflineCapture {
 			final Ethernet ethernet = new Ethernet();
 			final Ip4 ip4 = new Ip4();
 			final Tcp tcp = new Tcp();
-			final Ip4tRouterAlertOption router = new Ip4tRouterAlertOption();
+			final Ip4RouterAlertOption router = new Ip4RouterAlertOption();
 
 			/* Capture packets and access protocol headers */
 			pcap.dispatch(PACKET_COUNT, (String user, Packet packet) -> { // Pro API

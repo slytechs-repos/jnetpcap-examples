@@ -17,12 +17,15 @@
  */
 package com.slytechs.jnet.jnetpcap.example.usecase;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.jnetpcap.PcapException;
 
 import com.slytechs.jnet.jnetpcap.NetPcap;
 import com.slytechs.jnet.jnetruntime.util.Detail;
-import com.slytechs.jnet.protocol.core.Ip4;
-import com.slytechs.jnet.protocol.core.Ip6;
+import com.slytechs.jnet.protocol.core.network.Ip4;
+import com.slytechs.jnet.protocol.core.network.Ip6;
 
 /**
  * Different use-cases of dealing with various IP related options (v4 and v6).
@@ -34,26 +37,27 @@ public class UsecaseIpOptions {
 
 	static final String FILENAME = "pcaps/ipv6-udp-fragmented.pcap";
 
-	public static void main(String[] args) throws PcapException {
+	public static void main(String[] args) throws PcapException, FileNotFoundException, IOException {
 		new UsecaseIpOptions().usecase1_listIpOptions();
 	}
 
-	void usecase1_listIpOptions() throws PcapException {
-		try (var pcap = NetPcap.openOffline(FILENAME)) {
+	void usecase1_listIpOptions() throws PcapException, FileNotFoundException, IOException {
+		try (var pcap = NetPcap.offline(FILENAME)) {
 
 			Ip4 ip4 = new Ip4();
 			Ip6 ip6 = new Ip6();
 
-			pcap.dispatch(packet -> {
-				if (packet.hasHeader(ip4)) {
+			pcap.getPacketDispatcher()
+					.dispatchPacket(packet -> {
+						if (packet.hasHeader(ip4)) {
 
-				}
+						}
 
-				if (packet.hasHeader(ip6)) {
-				}
-				
-				System.out.println(packet.descriptor().toString(Detail.HIGH));
-			});
+						if (packet.hasHeader(ip6)) {
+						}
+
+						System.out.println(packet.descriptor().toString(Detail.HIGH));
+					});
 
 		}
 	}

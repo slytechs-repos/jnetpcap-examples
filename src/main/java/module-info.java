@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Sly Technologies Inc.
+ * Copyright (c) 2022-2024 Sly Technologies Inc.
  */
 
 /**
@@ -10,9 +10,13 @@
  */
 module com.slytechs.jnetpcap.example {
 
+	// Low level libpcap wrapper
 	requires org.jnetpcap;
-	requires com.slytechs.jnet.jnetruntime;
+	
+	// High level protocol enabled API
 	requires com.slytechs.jnet.jnetpcap;
+	
+	requires com.slytechs.jnet.jnetruntime;
 	requires com.slytechs.jnet.protocol;
 	requires com.slytechs.jnet.protocol.web;
 

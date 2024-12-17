@@ -17,15 +17,18 @@
  */
 package com.slytechs.jnet.jnetpcap.example.usecase;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.jnetpcap.PcapException;
 
 import com.slytechs.jnet.jnetpcap.NetPcap;
 import com.slytechs.jnet.jnetruntime.util.Detail;
-import com.slytechs.jnet.protocol.core.Icmp;
-import com.slytechs.jnet.protocol.core.Icmp4;
-import com.slytechs.jnet.protocol.core.Icmp4Echo;
-import com.slytechs.jnet.protocol.core.Icmp6;
-import com.slytechs.jnet.protocol.core.Icmp6Echo;
+import com.slytechs.jnet.protocol.core.network.Icmp;
+import com.slytechs.jnet.protocol.core.network.Icmp4;
+import com.slytechs.jnet.protocol.core.network.Icmp4Echo;
+import com.slytechs.jnet.protocol.core.network.Icmp6;
+import com.slytechs.jnet.protocol.core.network.Icmp6Echo;
 
 /**
  * Different use-cases of checking for various ICMP types efficiently.
@@ -37,83 +40,86 @@ public class UsecaseIcmpTypeLookup {
 
 	static final String FILENAME = "pcaps/IPv4-ipf.pcapng";
 
-	public static void main(String[] args) throws PcapException {
+	public static void main(String[] args) throws PcapException, FileNotFoundException, IOException {
 //		new UsecaseIcmpTypeLookup().usecase1_byNumericalVersionAndType();
 //		new UsecaseIcmpTypeLookup().usecase2_byIcmpHeaderPeerVersion();
 		new UsecaseIcmpTypeLookup().usecase3_bySpecificIcmpHeaderTypes();
 	}
 
-	void usecase1_byNumericalVersionAndType() throws PcapException {
+	void usecase1_byNumericalVersionAndType() throws PcapException, FileNotFoundException, IOException {
 		final Icmp icmp = new Icmp();
 
-		try (var pcap = NetPcap.openOffline(FILENAME)) {
+		try (var pcap = NetPcap.offline(FILENAME)) {
 
-			pcap.dispatch(packet -> {
-				if (!packet.hasHeader(icmp))
-					return;
+			pcap.getPacketDispatcher()
+					.dispatchPacket(packet -> {
+						if (!packet.hasHeader(icmp))
+							return;
 
-				if (icmp.version() == 4)
-					switch (icmp.type()) {
-					}
-				else if (icmp.version() == 6)
-					switch (icmp.type()) {
-					}
-			});
+						if (icmp.version() == 4)
+							switch (icmp.type()) {
+							}
+						else if (icmp.version() == 6)
+							switch (icmp.type()) {
+							}
+					});
 
 		}
 	}
 
-	void usecase2_byIcmpHeaderPeerVersion() throws PcapException {
+	void usecase2_byIcmpHeaderPeerVersion() throws PcapException, FileNotFoundException, IOException {
 		final Icmp4 icmp4 = new Icmp4();
 		final Icmp6 icmp6 = new Icmp6();
 
-		try (var pcap = NetPcap.openOffline(FILENAME)) {
+		try (var pcap = NetPcap.offline(FILENAME)) {
 
-			pcap.dispatch(packet -> {
-				if (packet.hasHeader(icmp4))
-					switch (icmp4.type()) {
-					}
+			pcap.getPacketDispatcher()
+					.dispatchPacket(packet -> {
+						if (packet.hasHeader(icmp4))
+							switch (icmp4.type()) {
+							}
 
-				else if (packet.hasHeader(icmp6))
-					switch (icmp6.type()) {
-					}
+						else if (packet.hasHeader(icmp6))
+							switch (icmp6.type()) {
+							}
 
-			});
+					});
 
 		}
 	}
 
-	void usecase3_bySpecificIcmpHeaderTypes() throws PcapException {
+	void usecase3_bySpecificIcmpHeaderTypes() throws PcapException, FileNotFoundException, IOException {
 		final Icmp4 icmp4 = new Icmp4();
 		final Icmp6 icmp6 = new Icmp6();
 		final Icmp4Echo echo = new Icmp4Echo();
 		final Icmp4Echo.Request echoRequest4 = new Icmp4Echo.Request();
 		final Icmp6Echo echo6 = new Icmp6Echo();
 
-		try (var pcap = NetPcap.openOffline(FILENAME)) {
+		try (var pcap = NetPcap.offline(FILENAME)) {
 
-			pcap.dispatch(1, packet -> {
+			pcap.getPacketDispatcher()
+					.dispatchPacket(packet -> {
 
-				System.out.println(packet.descriptor().toString(Detail.HIGH));
+						System.out.println(packet.descriptor().toString(Detail.HIGH));
 //					System.out.println(packet);
 
-				if (packet.hasHeader(icmp4)) {
-					System.out.println(icmp4.toString(Detail.HIGH));
-				}
-				
-				if (packet.hasHeader(echo)) {
-					System.out.println(echo.toString(Detail.HIGH));
-				}
+						if (packet.hasHeader(icmp4)) {
+							System.out.println(icmp4.toString(Detail.HIGH));
+						}
 
-				if (packet.hasHeader(echoRequest4)) {
+						if (packet.hasHeader(echo)) {
+							System.out.println(echo.toString(Detail.HIGH));
+						}
+
+						if (packet.hasHeader(echoRequest4)) {
 //					System.out.println(echoRequest4.toString(Detail.HIGH));
 
-				} else if (packet.hasHeader(echo6)) {
-					System.out.println(echo6.toString(Detail.HIGH));
+						} else if (packet.hasHeader(echo6)) {
+							System.out.println(echo6.toString(Detail.HIGH));
 
-				}
+						}
 
-			});
+					});
 
 		}
 	}

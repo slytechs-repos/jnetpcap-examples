@@ -1,7 +1,7 @@
 /*
  * Apache License, Version 2.0
  * 
- * Copyright 2013-2022 Sly Technologies Inc.
+ * Copyright 2013-2024 Sly Technologies Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,15 +17,18 @@
  */
 package com.slytechs.jnet.jnetpcap.example;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.jnetpcap.PcapException;
 
 import com.slytechs.jnet.jnetpcap.NetPcap;
 import com.slytechs.jnet.protocol.Packet;
-import com.slytechs.jnet.protocol.core.Ethernet;
-import com.slytechs.jnet.protocol.core.Ip4;
-import com.slytechs.jnet.protocol.core.Ip4tRouterAlertOption;
-import com.slytechs.jnet.protocol.core.Tcp;
 import com.slytechs.jnet.protocol.core.constants.PacketDescriptorType;
+import com.slytechs.jnet.protocol.core.link.Ethernet;
+import com.slytechs.jnet.protocol.core.network.Ip4;
+import com.slytechs.jnet.protocol.core.network.Ip4RouterAlertOption;
+import com.slytechs.jnet.protocol.core.transport.Tcp;
 import com.slytechs.jnet.protocol.meta.PacketFormat;
 
 /**
@@ -35,20 +38,24 @@ import com.slytechs.jnet.protocol.meta.PacketFormat;
  * delivered to the user handler as packets and also drop the original
  * reassembled fragments. We are only interested in non-fragment IP datagrams.
  */
-public class Example1_CapturePacketsAndPrintHeaders {
+public class OfflineCapture {
 
 	/**
 	 * Bootstrap the example.
 	 *
 	 * @param args ignored
 	 * @throws PcapException any pcap exceptions
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
-	public static void main(String[] args) throws PcapException {
-		new Example1_CapturePacketsAndPrintHeaders().main();
+	public static void main(String[] args) throws PcapException, FileNotFoundException, IOException {
+		new OfflineCapture().main();
 	}
 
-	/** Example instance */
-	void main() throws PcapException {
+	/** Example instance 
+	 * @throws IOException 
+	 * @throws FileNotFoundException */
+	void main() throws PcapException, FileNotFoundException, IOException {
 
 		/* Pcap capture file to read included with the example JAR file */
 		final String PCAP_FILE = "pcaps/HTTP.cap";
@@ -57,7 +64,7 @@ public class Example1_CapturePacketsAndPrintHeaders {
 		 * Automatically close Pcap resource when done and checks the client and
 		 * installed runtime API versions to ensure they are compatible.
 		 */
-		try (NetPcap pcap = NetPcap.openOffline(PCAP_FILE)) {
+		try (NetPcap pcap = NetPcap.offline(PCAP_FILE)) {
 
 			/* Set a pretty print formatter to toString() method */
 			pcap.setPacketFormatter(new PacketFormat())
@@ -70,29 +77,30 @@ public class Example1_CapturePacketsAndPrintHeaders {
 			final Ethernet ethernet = new Ethernet();
 			final Ip4 ip4 = new Ip4();
 			final Tcp tcp = new Tcp();
-			final Ip4tRouterAlertOption router = new Ip4tRouterAlertOption();
+			final Ip4RouterAlertOption router = new Ip4RouterAlertOption();
 
 			/* Capture packets and access protocol headers */
-			pcap.dispatch(PACKET_COUNT, (String user, Packet packet) -> { // Pro API
+			pcap.getPacketDispatcher()
+					.dispatchPacket(PACKET_COUNT, (String user, Packet packet) -> { // Pro API
 
-				// If present, printout ethernet header
-				if (packet.hasHeader(ethernet))
-					System.out.println(ethernet);
+						// If present, printout ethernet header
+						if (packet.hasHeader(ethernet))
+							System.out.println(ethernet);
 
-				// If present, printout ip4 header
-				if (packet.hasHeader(ip4))
-					System.out.println(ip4);
+						// If present, printout ip4 header
+						if (packet.hasHeader(ip4))
+							System.out.println(ip4);
 
-				// If present, printout IPv4.router header extension
-				if (packet.hasHeader(ip4) && ip4.hasOption(router))
-					System.out.println(router);
+						// If present, printout IPv4.router header extension
+						if (packet.hasHeader(ip4) && ip4.hasOption(router))
+							System.out.println(router);
 
-				// If present, printout tcp header
-				if (packet.hasHeader(tcp)) {
-					System.out.println(tcp);
-				}
+						// If present, printout tcp header
+						if (packet.hasHeader(tcp)) {
+							System.out.println(tcp);
+						}
 
-			}, "Example1 - Hello World");
+					}, "Example1 - Hello World");
 		}
 	}
 }

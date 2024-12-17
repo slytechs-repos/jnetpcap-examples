@@ -17,6 +17,9 @@
  */
 package com.slytechs.jnet.jnetpcap.example;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.jnetpcap.PcapException;
 
 import com.slytechs.jnet.jnetpcap.NetPcap;
@@ -28,20 +31,27 @@ import com.slytechs.jnet.jnetpcap.NetPcap;
 public class Example6_smallest_footprint {
 	final String LAN_FILE = "pcaps/LAN-1.pcapng";
 
-	/** Bootstrap the example */
-	public static void main(String[] args) throws PcapException {
+	/**
+	 * Bootstrap the example
+	 * 
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
+	public static void main(String[] args) throws PcapException, FileNotFoundException, IOException {
 		new Example6_smallest_footprint().main();
 	}
 
 	/**
 	 * Shortest example possible.
 	 *
-	 * @throws PcapException the pcap exception
+	 * @throws PcapException         the pcap exception
+	 * @throws IOException
+	 * @throws FileNotFoundException
 	 */
-	void main() throws PcapException {
+	void main() throws PcapException, FileNotFoundException, IOException {
 
-		try (var pcap = NetPcap.openOffline("pcaps/IPv4-ipf.pcapng")) {
-			pcap.dispatch(System.out::println);
+		try (var pcap = NetPcap.offline("pcaps/IPv4-ipf.pcapng")) {
+			pcap.getPacketDispatcher().dispatchPacket(System.out::println);
 		}
 
 	}

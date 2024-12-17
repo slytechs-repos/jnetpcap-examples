@@ -26,9 +26,9 @@ import org.jnetpcap.PcapIf;
 import com.slytechs.jnet.jnetpcap.NetPcap;
 import com.slytechs.jnet.jnetruntime.util.MemoryUnit;
 import com.slytechs.jnet.protocol.Packet;
-import com.slytechs.jnet.protocol.core.Ip4;
-import com.slytechs.jnet.protocol.core.Tcp;
 import com.slytechs.jnet.protocol.core.constants.PacketDescriptorType;
+import com.slytechs.jnet.protocol.core.network.Ip4;
+import com.slytechs.jnet.protocol.core.transport.Tcp;
 import com.slytechs.jnet.protocol.meta.PacketFormat;
 import com.slytechs.jnet.protocol.web.Html;
 import com.slytechs.jnet.protocol.web.Http;
@@ -51,7 +51,7 @@ public class Example4_LiveCaptureAndPrint {
 
 		System.out.println("Opening device '%s'".formatted(device.name()));
 
-		try (NetPcap pcap = NetPcap.create(device)) { // Pro API
+		try (NetPcap pcap = NetPcap.live(device)) {
 
 			/* Pro API! Set packet descriptor type and pretty print formatter */
 			pcap
@@ -64,7 +64,8 @@ public class Example4_LiveCaptureAndPrint {
 			/* Number of packets to capture */
 			final int PACKET_COUNT = 0;
 
-			pcap.loop(PACKET_COUNT, Example4_LiveCaptureAndPrint::nextPacket, "Example4"); // Pro API
+			pcap.getPacketDispatcher()
+					.dispatchPacket(PACKET_COUNT, Example4_LiveCaptureAndPrint::nextPacket, "Example4");
 		}
 	}
 

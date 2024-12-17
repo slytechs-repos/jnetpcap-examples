@@ -17,6 +17,9 @@
  */
 package com.slytechs.jnet.jnetpcap.example;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.jnetpcap.PcapException;
 
 import com.slytechs.jnet.jnetpcap.NetPcap;
@@ -27,38 +30,46 @@ import com.slytechs.jnet.protocol.Packet;
  * Example showing how to capture offline packets and dispatch to a user packet
  * handler of type {@code PcapProHandler.OfPacket}.
  */
-public class Example2_PacketDescriptorTimestamp {
+public class PacketType2Descriptor {
 
 	/**
 	 * Bootstrap the example.
 	 *
 	 * @param args ignored
-	 * @throws PcapException any pcap exceptions
+	 * @throws PcapException         any pcap exceptions
+	 * @throws IOException
+	 * @throws FileNotFoundException
 	 */
-	public static void main(String[] args) throws PcapException {
-		new Example2_PacketDescriptorTimestamp().main();
+	public static void main(String[] args) throws PcapException, FileNotFoundException, IOException {
+		new PacketType2Descriptor().main();
 	}
 
-	/** Example instance */
-	void main() throws PcapException {
+	/**
+	 * Example instance
+	 * 
+	 * @throws IOException
+	 * @throws FileNotFoundException
+	 */
+	void main() throws PcapException, FileNotFoundException, IOException {
 		/* Pcap capture file to read */
 		final String PCAP_FILE = "pcaps/HTTP.cap";
 
 		/* Automatically close Pcap resource when done */
-		try (NetPcap pcap = NetPcap.openOffline(PCAP_FILE)) { // Pro API
+		try (NetPcap pcap = NetPcap.offline(PCAP_FILE)) {
 
 			/* Number of packets to capture */
 			final int PACKET_COUNT = 10;
 
 			/* Send packets to handler. The generic user parameter can be of any type. */
-			pcap.loop(PACKET_COUNT, (String user, Packet packet) -> { // Pro API
-				System.out.printf("%s: %03d: caplen=%-,5d ts=%s%n",
-						user,
-						packet.descriptor().frameNo(),
-						packet.captureLength(),
-						new Timestamp(packet.timestamp(), packet.timestampUnit()));
+			pcap.getPacketDispatcher()
+					.dispatchPacket(PACKET_COUNT, (String user, Packet packet) -> {
+						System.out.printf("%s: %03d: caplen=%-,5d ts=%s%n",
+								user,
+								packet.descriptor().frameNo(),
+								packet.captureLength(),
+								new Timestamp(packet.timestamp(), packet.timestampUnit()));
 
-			}, "Example2");
+					}, "Example2");
 		}
 	}
 }

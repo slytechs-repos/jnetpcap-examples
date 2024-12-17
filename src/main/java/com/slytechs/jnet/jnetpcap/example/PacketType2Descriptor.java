@@ -61,15 +61,14 @@ public class PacketType2Descriptor {
 			final int PACKET_COUNT = 10;
 
 			/* Send packets to handler. The generic user parameter can be of any type. */
-			pcap.getPacketDispatcher()
-					.dispatchPacket(PACKET_COUNT, (String user, Packet packet) -> {
-						System.out.printf("%s: %03d: caplen=%-,5d ts=%s%n",
-								user,
-								packet.descriptor().frameNo(),
-								packet.captureLength(),
-								new Timestamp(packet.timestamp(), packet.timestampUnit()));
+			pcap.dispatchPacket(PACKET_COUNT, (String user, Packet packet) -> {
+				System.out.printf("%s: %03d: caplen=%-,5d ts=%s%n",
+						user,
+						packet.descriptor().frameNo(),
+						packet.captureLength(),
+						new Timestamp(packet.timestamp(), packet.timestampUnit()));
 
-					}, "Example2");
+			}, "Example2");
 		}
 	}
 }

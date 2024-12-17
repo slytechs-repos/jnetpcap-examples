@@ -1,30 +1,30 @@
 /*
- * Apache License, Version 2.0
+ * Sly Technologies Free License
  * 
- * Copyright 2013-2024 Sly Technologies Inc.
+ * Copyright 2024 Sly Technologies Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Sly Technologies Free License (the "License"); you may not
+ * use this file except in compliance with the License. You may obtain a copy of
+ * the License at
  * 
- *   http://www.apache.org/licenses/LICENSE-2.0
- *   
+ * http://www.slytechs.com/free-license-text
+ * 
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ * License for the specific language governing permissions and limitations under
+ * the License.
  */
 package com.slytechs.jnet.jnetpcap.example;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import org.jnetpcap.Pcap;
 import org.jnetpcap.PcapException;
 
 import com.slytechs.jnet.jnetpcap.NetPcap;
 import com.slytechs.jnet.protocol.Packet;
-import com.slytechs.jnet.protocol.core.constants.PacketDescriptorType;
 import com.slytechs.jnet.protocol.core.link.Ethernet;
 import com.slytechs.jnet.protocol.core.network.Ip4;
 import com.slytechs.jnet.protocol.core.network.Ip4RouterAlertOption;
@@ -32,14 +32,12 @@ import com.slytechs.jnet.protocol.core.transport.Tcp;
 import com.slytechs.jnet.protocol.meta.PacketFormat;
 
 /**
- * Example showing how to capture offline packets and dispatch to a user packet
- * handler of type {@code PcapProHandler.OfPacket}. The example also enables IP
- * fragment reassembly which will cause fully reassembled IP datagrams to be
- * delivered to the user handler as packets and also drop the original
- * reassembled fragments. We are only interested in non-fragment IP datagrams.
+ * 
+ *
+ * @author Mark Bednarczyk [mark@slytechs.com]
+ * @author Sly Technologies Inc.
  */
-public class OfflineCapture {
-
+public class Example1_CapturePacketsAndPrintHeaders {
 	/**
 	 * Bootstrap the example.
 	 *
@@ -49,7 +47,7 @@ public class OfflineCapture {
 	 * @throws FileNotFoundException
 	 */
 	public static void main(String[] args) throws PcapException, FileNotFoundException, IOException {
-		new OfflineCapture().main();
+		new Example1_CapturePacketsAndPrintHeaders().main();
 	}
 
 	/**
@@ -59,9 +57,11 @@ public class OfflineCapture {
 	 * @throws FileNotFoundException
 	 */
 	void main() throws PcapException, FileNotFoundException, IOException {
-
-		/* Pcap capture file to read included with the example JAR file */
+		/* Pcap capture file to read */
 		final String PCAP_FILE = "pcaps/HTTP.cap";
+
+		/* Make sure we have a compatible Pcap runtime installed */
+		Pcap.checkPcapVersion(Pcap.VERSION);
 
 		/*
 		 * Automatically close Pcap resource when done and checks the client and
@@ -70,20 +70,19 @@ public class OfflineCapture {
 		try (NetPcap pcap = NetPcap.offline(PCAP_FILE)) {
 
 			/* Set a pretty print formatter to toString() method */
-			pcap.setPacketFormatter(new PacketFormat())
-					.setDescriptorType(PacketDescriptorType.TYPE2);
+			pcap.setPacketFormatter(new PacketFormat());
 
 			/* Number of packets to capture */
 			final int PACKET_COUNT = 10;
 
-			/* Pro API! Create protocol headers and reuse inside the dispatch handler */
+			/* Create protocol headers and reuse inside the dispatch handler */
 			final Ethernet ethernet = new Ethernet();
 			final Ip4 ip4 = new Ip4();
 			final Tcp tcp = new Tcp();
 			final Ip4RouterAlertOption router = new Ip4RouterAlertOption();
 
 			/* Capture packets and access protocol headers */
-			pcap.dispatchPacket(PACKET_COUNT, (String user, Packet packet) -> { // Pro API
+			pcap.dispatchPacket(PACKET_COUNT, (String user, Packet packet) -> {
 
 				// If present, printout ethernet header
 				if (packet.hasHeader(ethernet))
@@ -98,11 +97,10 @@ public class OfflineCapture {
 					System.out.println(router);
 
 				// If present, printout tcp header
-				if (packet.hasHeader(tcp)) {
+				if (packet.hasHeader(tcp))
 					System.out.println(tcp);
-				}
 
-			}, "Example1 - Hello World");
+			}, "Example2 - Hello World");
 		}
 	}
 }

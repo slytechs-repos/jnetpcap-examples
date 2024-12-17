@@ -64,8 +64,7 @@ public class Example4_LiveCaptureAndPrint {
 			/* Number of packets to capture */
 			final int PACKET_COUNT = 0;
 
-			pcap.getPacketDispatcher()
-					.dispatchPacket(PACKET_COUNT, Example4_LiveCaptureAndPrint::nextPacket, "Example4");
+			pcap.dispatchPacket(PACKET_COUNT, Example4_LiveCaptureAndPrint::nextPacket, "Example4");
 		}
 	}
 

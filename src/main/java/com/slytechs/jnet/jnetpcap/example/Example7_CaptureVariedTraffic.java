@@ -52,7 +52,7 @@ public class Example7_CaptureVariedTraffic {
 					.activate();
 
 			int FRAME_NO = 400;
-			pcap.getPacketDispatcher().dispatchPacket(this::nextPacket);
+			pcap.dispatchPacket(this::nextPacket);
 
 		}
 

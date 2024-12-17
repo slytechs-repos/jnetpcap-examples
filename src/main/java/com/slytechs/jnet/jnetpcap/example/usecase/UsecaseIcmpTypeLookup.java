@@ -51,18 +51,17 @@ public class UsecaseIcmpTypeLookup {
 
 		try (var pcap = NetPcap.offline(FILENAME)) {
 
-			pcap.getPacketDispatcher()
-					.dispatchPacket(packet -> {
-						if (!packet.hasHeader(icmp))
-							return;
+			pcap.dispatchPacket(packet -> {
+				if (!packet.hasHeader(icmp))
+					return;
 
-						if (icmp.version() == 4)
-							switch (icmp.type()) {
-							}
-						else if (icmp.version() == 6)
-							switch (icmp.type()) {
-							}
-					});
+				if (icmp.version() == 4)
+					switch (icmp.type()) {
+					}
+				else if (icmp.version() == 6)
+					switch (icmp.type()) {
+					}
+			});
 
 		}
 	}
@@ -73,17 +72,16 @@ public class UsecaseIcmpTypeLookup {
 
 		try (var pcap = NetPcap.offline(FILENAME)) {
 
-			pcap.getPacketDispatcher()
-					.dispatchPacket(packet -> {
-						if (packet.hasHeader(icmp4))
-							switch (icmp4.type()) {
-							}
+			pcap.dispatchPacket(packet -> {
+				if (packet.hasHeader(icmp4))
+					switch (icmp4.type()) {
+					}
 
-						else if (packet.hasHeader(icmp6))
-							switch (icmp6.type()) {
-							}
+				else if (packet.hasHeader(icmp6))
+					switch (icmp6.type()) {
+					}
 
-					});
+			});
 
 		}
 	}
@@ -97,29 +95,28 @@ public class UsecaseIcmpTypeLookup {
 
 		try (var pcap = NetPcap.offline(FILENAME)) {
 
-			pcap.getPacketDispatcher()
-					.dispatchPacket(packet -> {
+			pcap.dispatchPacket(packet -> {
 
-						System.out.println(packet.descriptor().toString(Detail.HIGH));
+				System.out.println(packet.descriptor().toString(Detail.HIGH));
 //					System.out.println(packet);
 
-						if (packet.hasHeader(icmp4)) {
-							System.out.println(icmp4.toString(Detail.HIGH));
-						}
+				if (packet.hasHeader(icmp4)) {
+					System.out.println(icmp4.toString(Detail.HIGH));
+				}
 
-						if (packet.hasHeader(echo)) {
-							System.out.println(echo.toString(Detail.HIGH));
-						}
+				if (packet.hasHeader(echo)) {
+					System.out.println(echo.toString(Detail.HIGH));
+				}
 
-						if (packet.hasHeader(echoRequest4)) {
+				if (packet.hasHeader(echoRequest4)) {
 //					System.out.println(echoRequest4.toString(Detail.HIGH));
 
-						} else if (packet.hasHeader(echo6)) {
-							System.out.println(echo6.toString(Detail.HIGH));
+				} else if (packet.hasHeader(echo6)) {
+					System.out.println(echo6.toString(Detail.HIGH));
 
-						}
+				}
 
-					});
+			});
 
 		}
 	}

@@ -51,7 +51,7 @@ public class Example6_smallest_footprint {
 	void main() throws PcapException, FileNotFoundException, IOException {
 
 		try (var pcap = NetPcap.offline("pcaps/IPv4-ipf.pcapng")) {
-			pcap.getPacketDispatcher().dispatchPacket(System.out::println);
+			pcap.dispatchPacket(System.out::println);
 		}
 
 	}

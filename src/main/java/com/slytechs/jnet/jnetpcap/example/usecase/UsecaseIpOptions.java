@@ -47,17 +47,16 @@ public class UsecaseIpOptions {
 			Ip4 ip4 = new Ip4();
 			Ip6 ip6 = new Ip6();
 
-			pcap.getPacketDispatcher()
-					.dispatchPacket(packet -> {
-						if (packet.hasHeader(ip4)) {
+			pcap.dispatchPacket(packet -> {
+				if (packet.hasHeader(ip4)) {
 
-						}
+				}
 
-						if (packet.hasHeader(ip6)) {
-						}
+				if (packet.hasHeader(ip6)) {
+				}
 
-						System.out.println(packet.descriptor().toString(Detail.HIGH));
-					});
+				System.out.println(packet.descriptor().toString(Detail.HIGH));
+			});
 
 		}
 	}

@@ -17,6 +17,9 @@
  */
 package com.slytechs.jnet.jnetpcap.example;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.jnetpcap.PcapException;
 
 import com.slytechs.jnet.jnetpcap.NetPcap;
@@ -33,13 +36,13 @@ import com.slytechs.jnet.protocol.meta.PacketFormat;
 public class Example7_CaptureVariedTraffic {
 	private final String PCAP_FILE = "pcaps/varied-traffic-capture-lan.pcapng";
 
-	public static void main(String[] args) throws PcapException {
+	public static void main(String[] args) throws PcapException, FileNotFoundException, IOException {
 		new Example7_CaptureVariedTraffic().main();
 	}
 
-	void main() throws PcapException {
+	void main() throws PcapException, FileNotFoundException, IOException {
 
-		try (var pcap = NetPcap.openOffline(PCAP_FILE)) {
+		try (var pcap = NetPcap.offline(PCAP_FILE)) {
 
 			pcap
 					.setDescriptorType(PacketDescriptorType.TYPE2)
@@ -49,14 +52,14 @@ public class Example7_CaptureVariedTraffic {
 					.activate();
 
 			int FRAME_NO = 400;
-			pcap.loop(FRAME_NO + 1, this::nextPacket, FRAME_NO);
+			pcap.getPacketDispatcher().dispatchPacket(this::nextPacket);
 
-			pcap.loop(1, this::nextPacket, FRAME_NO);
 		}
 
 	}
 
-	private void nextPacket(int frameNo, Packet packet) {
+	private void nextPacket(Packet packet) {
+		long frameNo = packet.descriptor().frameNo();
 //		if (frameNo != packet.descriptor().frameNo)
 //			return;
 

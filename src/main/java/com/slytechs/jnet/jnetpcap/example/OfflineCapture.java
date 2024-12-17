@@ -17,6 +17,9 @@
  */
 package com.slytechs.jnet.jnetpcap.example;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+
 import org.jnetpcap.PcapException;
 
 import com.slytechs.jnet.jnetpcap.NetPcap;
@@ -42,13 +45,17 @@ public class OfflineCapture {
 	 *
 	 * @param args ignored
 	 * @throws PcapException any pcap exceptions
+	 * @throws IOException 
+	 * @throws FileNotFoundException 
 	 */
-	public static void main(String[] args) throws PcapException {
+	public static void main(String[] args) throws PcapException, FileNotFoundException, IOException {
 		new OfflineCapture().main();
 	}
 
-	/** Example instance */
-	void main() throws PcapException {
+	/** Example instance 
+	 * @throws IOException 
+	 * @throws FileNotFoundException */
+	void main() throws PcapException, FileNotFoundException, IOException {
 
 		/* Pcap capture file to read included with the example JAR file */
 		final String PCAP_FILE = "pcaps/HTTP.cap";
@@ -57,7 +64,7 @@ public class OfflineCapture {
 		 * Automatically close Pcap resource when done and checks the client and
 		 * installed runtime API versions to ensure they are compatible.
 		 */
-		try (NetPcap pcap = NetPcap.openOffline(PCAP_FILE)) {
+		try (NetPcap pcap = NetPcap.offline(PCAP_FILE)) {
 
 			/* Set a pretty print formatter to toString() method */
 			pcap.setPacketFormatter(new PacketFormat())
@@ -73,26 +80,27 @@ public class OfflineCapture {
 			final Ip4RouterAlertOption router = new Ip4RouterAlertOption();
 
 			/* Capture packets and access protocol headers */
-			pcap.dispatch(PACKET_COUNT, (String user, Packet packet) -> { // Pro API
+			pcap.getPacketDispatcher()
+					.dispatchPacket(PACKET_COUNT, (String user, Packet packet) -> { // Pro API
 
-				// If present, printout ethernet header
-				if (packet.hasHeader(ethernet))
-					System.out.println(ethernet);
+						// If present, printout ethernet header
+						if (packet.hasHeader(ethernet))
+							System.out.println(ethernet);
 
-				// If present, printout ip4 header
-				if (packet.hasHeader(ip4))
-					System.out.println(ip4);
+						// If present, printout ip4 header
+						if (packet.hasHeader(ip4))
+							System.out.println(ip4);
 
-				// If present, printout IPv4.router header extension
-				if (packet.hasHeader(ip4) && ip4.hasOption(router))
-					System.out.println(router);
+						// If present, printout IPv4.router header extension
+						if (packet.hasHeader(ip4) && ip4.hasOption(router))
+							System.out.println(router);
 
-				// If present, printout tcp header
-				if (packet.hasHeader(tcp)) {
-					System.out.println(tcp);
-				}
+						// If present, printout tcp header
+						if (packet.hasHeader(tcp)) {
+							System.out.println(tcp);
+						}
 
-			}, "Example1 - Hello World");
+					}, "Example1 - Hello World");
 		}
 	}
 }

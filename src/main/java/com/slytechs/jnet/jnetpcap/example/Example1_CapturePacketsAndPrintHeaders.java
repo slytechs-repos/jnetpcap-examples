@@ -20,13 +20,13 @@ import java.io.IOException;
 
 import org.jnetpcap.PcapException;
 
-import com.slytechs.jnet.jnetpcap.NetPcap;
-import com.slytechs.jnet.protocol.Packet;
-import com.slytechs.jnet.protocol.core.link.Ethernet;
-import com.slytechs.jnet.protocol.core.network.Ip4;
-import com.slytechs.jnet.protocol.core.network.Ip4RouterAlertOption;
-import com.slytechs.jnet.protocol.core.transport.Tcp;
-import com.slytechs.jnet.protocol.meta.PacketFormat;
+import com.slytechs.jnet.jnetpcap.api.NetPcap;
+import com.slytechs.jnet.protocol.api.meta.PacketFormat;
+import com.slytechs.jnet.protocol.api.packet.Packet;
+import com.slytechs.jnet.protocol.tcpip.link.Ethernet;
+import com.slytechs.jnet.protocol.tcpip.network.Ip4;
+import com.slytechs.jnet.protocol.tcpip.network.Ip4RouterAlertOption;
+import com.slytechs.jnet.protocol.tcpip.transport.Tcp;
 
 /**
  * Example demonstrating basic packet capture and header inspection using

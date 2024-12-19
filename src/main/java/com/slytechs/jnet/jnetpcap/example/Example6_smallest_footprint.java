@@ -22,7 +22,7 @@ import java.io.IOException;
 
 import org.jnetpcap.PcapException;
 
-import com.slytechs.jnet.jnetpcap.NetPcap;
+import com.slytechs.jnet.jnetpcap.api.NetPcap;
 
 /**
  * @author Sly Technologies Inc

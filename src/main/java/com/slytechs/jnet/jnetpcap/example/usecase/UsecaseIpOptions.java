@@ -22,10 +22,10 @@ import java.io.IOException;
 
 import org.jnetpcap.PcapException;
 
-import com.slytechs.jnet.jnetpcap.NetPcap;
+import com.slytechs.jnet.jnetpcap.api.NetPcap;
 import com.slytechs.jnet.jnetruntime.util.Detail;
-import com.slytechs.jnet.protocol.core.network.Ip4;
-import com.slytechs.jnet.protocol.core.network.Ip6;
+import com.slytechs.jnet.protocol.tcpip.network.Ip4;
+import com.slytechs.jnet.protocol.tcpip.network.Ip6;
 
 /**
  * Different use-cases of dealing with various IP related options (v4 and v6).

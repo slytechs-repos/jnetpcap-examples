@@ -1,4 +1,4 @@
-![Maven Central](https://img.shields.io/maven-central/v/com.slytechs.jnet.jnetpcap/jnetpcap-example)
+![Maven Central](https://img.shields.io/maven-central/v/com.slytechs.jnet.jnetpcap.api/jnetpcap-example)
 
 # Examples of jNetPcap API usage
 The examples in this modules are a mixture of [**jnetpcap**](https://github.com/slytechs-repos/jnetpcap) and [**jnetpcap-pro**](https://github.com/slytechs-repos/jnetpcap-pro) API usage. Both modules are free, no cost to use in your projects.

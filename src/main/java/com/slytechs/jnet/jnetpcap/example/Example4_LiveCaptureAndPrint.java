@@ -23,13 +23,13 @@ import org.jnetpcap.Pcap;
 import org.jnetpcap.PcapException;
 import org.jnetpcap.PcapIf;
 
-import com.slytechs.jnet.jnetpcap.NetPcap;
+import com.slytechs.jnet.jnetpcap.api.NetPcap;
 import com.slytechs.jnet.jnetruntime.util.MemoryUnit;
-import com.slytechs.jnet.protocol.Packet;
-import com.slytechs.jnet.protocol.core.constants.PacketDescriptorType;
-import com.slytechs.jnet.protocol.core.network.Ip4;
-import com.slytechs.jnet.protocol.core.transport.Tcp;
-import com.slytechs.jnet.protocol.meta.PacketFormat;
+import com.slytechs.jnet.protocol.api.meta.PacketFormat;
+import com.slytechs.jnet.protocol.api.packet.Packet;
+import com.slytechs.jnet.protocol.tcpip.constants.PacketDescriptorType;
+import com.slytechs.jnet.protocol.tcpip.network.Ip4;
+import com.slytechs.jnet.protocol.tcpip.transport.Tcp;
 import com.slytechs.jnet.protocol.web.Html;
 import com.slytechs.jnet.protocol.web.Http;
 

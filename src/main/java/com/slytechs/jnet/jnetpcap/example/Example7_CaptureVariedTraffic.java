@@ -22,11 +22,11 @@ import java.io.IOException;
 
 import org.jnetpcap.PcapException;
 
-import com.slytechs.jnet.jnetpcap.NetPcap;
+import com.slytechs.jnet.jnetpcap.api.NetPcap;
 import com.slytechs.jnet.jnetruntime.util.HexStrings;
-import com.slytechs.jnet.protocol.Packet;
-import com.slytechs.jnet.protocol.core.constants.PacketDescriptorType;
-import com.slytechs.jnet.protocol.meta.PacketFormat;
+import com.slytechs.jnet.protocol.api.meta.PacketFormat;
+import com.slytechs.jnet.protocol.api.packet.Packet;
+import com.slytechs.jnet.protocol.tcpip.constants.PacketDescriptorType;
 
 /**
  * @author Sly Technologies Inc

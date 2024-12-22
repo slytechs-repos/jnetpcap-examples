@@ -23,7 +23,7 @@ import java.io.IOException;
 import org.jnetpcap.PcapException;
 
 import com.slytechs.jnet.jnetpcap.api.NetPcap;
-import com.slytechs.jnet.jnetruntime.time.Timestamp;
+import com.slytechs.jnet.platform.api.time.Timestamp;
 import com.slytechs.jnet.protocol.api.packet.Packet;
 
 /**

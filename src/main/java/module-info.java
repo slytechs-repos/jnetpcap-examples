@@ -16,8 +16,8 @@ module com.slytechs.jnetpcap.example {
 	// High level protocol enabled API
 	requires com.slytechs.jnet.jnetpcap.api;
 	
-	requires com.slytechs.jnet.jnetruntime;
-	requires com.slytechs.jnet.protocol;
+	requires com.slytechs.jnet.platform.api;
+	requires com.slytechs.jnet.protocol.api;
 	requires com.slytechs.jnet.protocol.web;
 
 }

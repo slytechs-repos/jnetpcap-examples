@@ -22,8 +22,8 @@ import org.jnetpcap.PcapException;
 import org.jnetpcap.PcapIf;
 
 import com.slytechs.jnet.jnetpcap.api.NetPcap;
-import com.slytechs.jnet.jnetruntime.NotFound;
-import com.slytechs.jnet.jnetruntime.util.MemoryUnit;
+import com.slytechs.jnet.platform.api.NotFound;
+import com.slytechs.jnet.platform.api.util.MemoryUnit;
 import com.slytechs.jnet.protocol.api.meta.PacketFormat;
 import com.slytechs.jnet.protocol.api.packet.Packet;
 import com.slytechs.jnet.protocol.tcpip.network.Ip4;

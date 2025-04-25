@@ -23,9 +23,9 @@ import java.io.IOException;
 import org.jnetpcap.PcapException;
 
 import com.slytechs.jnet.jnetpcap.api.NetPcap;
-import com.slytechs.jnet.platform.api.util.Detail;
-import com.slytechs.jnet.protocol.tcpip.network.Ip4;
-import com.slytechs.jnet.protocol.tcpip.network.Ip6;
+import com.slytechs.jnet.platform.api.util.format.Detail;
+import com.slytechs.jnet.protocol.tcpip.ip.Ip4;
+import com.slytechs.jnet.protocol.tcpip.ip.Ip6;
 
 /**
  * Different use-cases of dealing with various IP related options (v4 and v6).

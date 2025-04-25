@@ -21,12 +21,13 @@ import java.io.IOException;
 import org.jnetpcap.PcapException;
 
 import com.slytechs.jnet.jnetpcap.api.NetPcap;
+import com.slytechs.jnet.platform.api.util.format.Detail;
+import com.slytechs.jnet.protocol.api.common.Packet;
 import com.slytechs.jnet.protocol.api.meta.PacketFormat;
-import com.slytechs.jnet.protocol.api.packet.Packet;
-import com.slytechs.jnet.protocol.tcpip.link.Ethernet;
-import com.slytechs.jnet.protocol.tcpip.network.Ip4;
-import com.slytechs.jnet.protocol.tcpip.network.Ip4RouterAlertOption;
-import com.slytechs.jnet.protocol.tcpip.transport.Tcp;
+import com.slytechs.jnet.protocol.tcpip.ethernet.Ethernet;
+import com.slytechs.jnet.protocol.tcpip.ip.Ip4;
+import com.slytechs.jnet.protocol.tcpip.ip.Ip4RouterAlertOption;
+import com.slytechs.jnet.protocol.tcpip.tcp.Tcp;
 
 /**
  * Example demonstrating basic packet capture and header inspection using
@@ -113,7 +114,7 @@ public class Example1_CapturePacketsAndPrintHeaders {
 			pcap.setPacketFormatter(new PacketFormat());
 
 			// Limit packet processing to first 10 packets for this example
-			final int PACKET_COUNT = 10;
+			final int PACKET_COUNT = 1;
 
 			// Initialize protocol headers once and reuse them for efficiency
 			final Ethernet ethernet = new Ethernet();
@@ -123,6 +124,16 @@ public class Example1_CapturePacketsAndPrintHeaders {
 
 			// Process packets and inspect headers using a lambda callback
 			pcap.dispatchPacket(PACKET_COUNT, (String user, Packet packet) -> {
+
+				try {
+//				System.out.println(packet.descriptor().toString(Detail.HIGH));
+					System.out.println(packet.toString(Detail.HIGH));
+				} catch (Throwable e) {
+					while (e.getCause() != null)
+						e = e.getCause();
+					
+					e.printStackTrace();
+				}
 
 				// Check and display Ethernet header if present
 				if (packet.hasHeader(ethernet))

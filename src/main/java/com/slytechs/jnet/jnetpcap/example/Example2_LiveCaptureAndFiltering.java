@@ -22,12 +22,12 @@ import org.jnetpcap.PcapException;
 import org.jnetpcap.PcapIf;
 
 import com.slytechs.jnet.jnetpcap.api.NetPcap;
-import com.slytechs.jnet.platform.api.NotFound;
+import com.slytechs.jnet.platform.api.common.NotFound;
 import com.slytechs.jnet.platform.api.util.MemoryUnit;
+import com.slytechs.jnet.protocol.api.common.Packet;
 import com.slytechs.jnet.protocol.api.meta.PacketFormat;
-import com.slytechs.jnet.protocol.api.packet.Packet;
-import com.slytechs.jnet.protocol.tcpip.network.Ip4;
-import com.slytechs.jnet.protocol.tcpip.transport.Tcp;
+import com.slytechs.jnet.protocol.tcpip.ip.Ip4;
+import com.slytechs.jnet.protocol.tcpip.tcp.Tcp;
 
 /**
  * Example demonstrating live packet capture and filtering capabilities of

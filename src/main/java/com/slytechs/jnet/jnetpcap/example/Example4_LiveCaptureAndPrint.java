@@ -25,11 +25,11 @@ import org.jnetpcap.PcapIf;
 
 import com.slytechs.jnet.jnetpcap.api.NetPcap;
 import com.slytechs.jnet.platform.api.util.MemoryUnit;
+import com.slytechs.jnet.protocol.api.common.Packet;
+import com.slytechs.jnet.protocol.api.core.PacketDescriptorType;
 import com.slytechs.jnet.protocol.api.meta.PacketFormat;
-import com.slytechs.jnet.protocol.api.packet.Packet;
-import com.slytechs.jnet.protocol.tcpip.constants.PacketDescriptorType;
-import com.slytechs.jnet.protocol.tcpip.network.Ip4;
-import com.slytechs.jnet.protocol.tcpip.transport.Tcp;
+import com.slytechs.jnet.protocol.tcpip.ip.Ip4;
+import com.slytechs.jnet.protocol.tcpip.tcp.Tcp;
 import com.slytechs.jnet.protocol.web.Html;
 import com.slytechs.jnet.protocol.web.Http;
 

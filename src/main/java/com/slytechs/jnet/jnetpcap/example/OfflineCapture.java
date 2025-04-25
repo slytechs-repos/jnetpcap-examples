@@ -23,13 +23,13 @@ import java.io.IOException;
 import org.jnetpcap.PcapException;
 
 import com.slytechs.jnet.jnetpcap.api.NetPcap;
+import com.slytechs.jnet.protocol.api.common.Packet;
+import com.slytechs.jnet.protocol.api.core.PacketDescriptorType;
 import com.slytechs.jnet.protocol.api.meta.PacketFormat;
-import com.slytechs.jnet.protocol.api.packet.Packet;
-import com.slytechs.jnet.protocol.tcpip.constants.PacketDescriptorType;
-import com.slytechs.jnet.protocol.tcpip.link.Ethernet;
-import com.slytechs.jnet.protocol.tcpip.network.Ip4;
-import com.slytechs.jnet.protocol.tcpip.network.Ip4RouterAlertOption;
-import com.slytechs.jnet.protocol.tcpip.transport.Tcp;
+import com.slytechs.jnet.protocol.tcpip.ethernet.Ethernet;
+import com.slytechs.jnet.protocol.tcpip.ip.Ip4;
+import com.slytechs.jnet.protocol.tcpip.ip.Ip4RouterAlertOption;
+import com.slytechs.jnet.protocol.tcpip.tcp.Tcp;
 
 /**
  * Example showing how to capture offline packets and dispatch to a user packet

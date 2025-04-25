@@ -24,7 +24,7 @@ import org.jnetpcap.PcapException;
 
 import com.slytechs.jnet.jnetpcap.api.NetPcap;
 import com.slytechs.jnet.platform.api.util.time.Timestamp;
-import com.slytechs.jnet.protocol.api.packet.Packet;
+import com.slytechs.jnet.protocol.api.common.Packet;
 
 /**
  * Example showing how to capture offline packets and dispatch to a user packet

@@ -23,12 +23,12 @@ import java.io.IOException;
 import org.jnetpcap.PcapException;
 
 import com.slytechs.jnet.jnetpcap.api.NetPcap;
-import com.slytechs.jnet.platform.api.util.Detail;
-import com.slytechs.jnet.protocol.tcpip.network.Icmp;
-import com.slytechs.jnet.protocol.tcpip.network.Icmp4;
-import com.slytechs.jnet.protocol.tcpip.network.Icmp4Echo;
-import com.slytechs.jnet.protocol.tcpip.network.Icmp6;
-import com.slytechs.jnet.protocol.tcpip.network.Icmp6Echo;
+import com.slytechs.jnet.platform.api.util.format.Detail;
+import com.slytechs.jnet.protocol.tcpip.icmp.Icmp;
+import com.slytechs.jnet.protocol.tcpip.icmp.Icmp4;
+import com.slytechs.jnet.protocol.tcpip.icmp.Icmp4Echo;
+import com.slytechs.jnet.protocol.tcpip.icmp.Icmp6;
+import com.slytechs.jnet.protocol.tcpip.icmp.Icmp6Echo;
 
 /**
  * Different use-cases of checking for various ICMP types efficiently.

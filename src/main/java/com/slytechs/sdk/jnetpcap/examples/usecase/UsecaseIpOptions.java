@@ -15,7 +15,7 @@
  * License for the specific language governing permissions and limitations under
  * the License.
  */
-package com.slytechs.jnet.jnetpcap.example.usecase;
+package com.slytechs.sdk.jnetpcap.examples.usecase;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

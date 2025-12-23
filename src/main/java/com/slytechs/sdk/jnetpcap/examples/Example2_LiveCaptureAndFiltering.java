@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.slytechs.jnet.jnetpcap.example;
+package com.slytechs.sdk.jnetpcap.examples;
 
 import java.io.IOException;
 import java.util.List;

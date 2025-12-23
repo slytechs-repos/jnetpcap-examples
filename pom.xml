@@ -3,29 +3,77 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<parent>
-		<groupId>com.slytechs.jnet.jnetpcap</groupId>
-		<artifactId>jnetpcap-sdk-parent</artifactId>
-		<version>0.2.0-SNAPSHOT</version>
-		<relativePath>../jnetpcap-sdk/pom.xml</relativePath>
-	</parent>
-	
+	<groupId>com.slytechs.sdk</groupId>
 	<artifactId>jnetpcap-examples</artifactId>
-	<name>jNetPcap SDK - Examples</name>
-	<description>jNetPcap examples</description>
+	<version>3.0.0-SNAPSHOT</version>
+	<packaging>jar</packaging>
 
+	<name>jNetPcap SDK Examples</name>
+	<description>Example code for jNetPcap SDK</description>
+	<url>https://github.com/slytechs-repos/jnetpcap-examples</url>
+
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
+		</license>
+	</licenses>
+
+	<organization>
+		<name>Sly Technologies Inc</name>
+		<url>https://www.slytechs.com</url>
+	</organization>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.release>22</maven.compiler.release>
+		<sdk.version>3.0.0-SNAPSHOT</sdk.version>
+	</properties>
 
 	<dependencies>
+		<!-- The SDK starter - pulls everything needed -->
 		<dependency>
-			<groupId>com.slytechs.jnet.jnetpcap</groupId>
-			<artifactId>jnetpcap-api</artifactId>
+			<groupId>com.slytechs.sdk</groupId>
+			<artifactId>jnetpcap-sdk</artifactId> 
+			<version>${sdk.version}</version>
+			<type>pom</type>
 		</dependency>
 
-
+		<!-- Optional: Web protocols for HTTP/TLS examples -->
+		<!--
 		<dependency>
-			<groupId>com.slytechs.jnet.protocol</groupId>
-			<artifactId>protocol-pack-web</artifactId>
+			<groupId>com.slytechs.sdk</groupId>
+			<artifactId>sdk-protocol-web</artifactId>
+			<version>${sdk.version}</version>
 		</dependency>
+		-->
 	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.12.1</version>
+			</plugin>
+
+			<!-- Run examples: mvn exec:java -Dexec.mainClass="com.slytechs.sdk.jnetpcap.examples.Example1_CapturePacketsAndPrintHeaders" -->
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.1.0</version>
+				<configuration>
+					<executable>java</executable>
+					<arguments>
+						<argument>--enable-preview</argument>
+						<argument>--enable-native-access=com.slytechs.sdk.jnetpcap</argument>
+						<argument>-classpath</argument>
+						<classpath />
+						<argument>${exec.mainClass}</argument>
+					</arguments>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 
 </project>

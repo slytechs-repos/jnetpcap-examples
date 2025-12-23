@@ -8,16 +8,15 @@
  * @author Sly Technologies
  * @author repos@slytechs.com
  */
-module com.slytechs.jnetpcap.example {
+module com.slytechs.jnetpcap.examples {
 
 	// Low level libpcap wrapper
-	requires org.jnetpcap;
+	requires com.slytechs.sdk.jnetpcap;
 	
 	// High level protocol enabled API
-	requires com.slytechs.jnet.jnetpcap.api;
+	requires com.slytechs.sdk.jnetpcap.api;
 	
-	requires com.slytechs.jnet.platform.api;
-	requires com.slytechs.jnet.protocol.api;
-	requires com.slytechs.jnet.protocol.web;
+	requires com.slytechs.sdk.common;
+	requires com.slytechs.sdk.protocol.core;
 
 }

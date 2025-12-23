@@ -13,21 +13,17 @@
 * See the License for the specific language governing permissions and
 * limitations under the License.
 */
-package com.slytechs.jnet.jnetpcap.example;
+package com.slytechs.sdk.jnetpcap.examples;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
-import org.jnetpcap.PcapException;
-
 import com.slytechs.jnet.jnetpcap.api.NetPcap;
-import com.slytechs.jnet.platform.api.util.format.Detail;
-import com.slytechs.jnet.protocol.api.common.Packet;
-import com.slytechs.jnet.protocol.api.meta.PacketFormat;
-import com.slytechs.jnet.protocol.tcpip.ethernet.Ethernet;
-import com.slytechs.jnet.protocol.tcpip.ip.Ip4;
-import com.slytechs.jnet.protocol.tcpip.ip.Ip4RouterAlertOption;
-import com.slytechs.jnet.protocol.tcpip.tcp.Tcp;
+import com.slytechs.sdk.jnetpcap.PcapException;
+import com.slytechs.sdk.protocol.core.Packet;
+import com.slytechs.sdk.protocol.tcpip.ethernet.Ethernet;
+import com.slytechs.sdk.protocol.tcpip.ip.Ip4;
+import com.slytechs.sdk.protocol.tcpip.tcp.Tcp;
 
 /**
  * Example demonstrating basic packet capture and header inspection using
@@ -108,10 +104,7 @@ public class Example1_CapturePacketsAndPrintHeaders {
 		NetPcap.checkVersion(NetPcap.VERSION);
 
 		// Open the pcap file using try-with-resources to ensure proper cleanup
-		try (NetPcap pcap = NetPcap.offline(PCAP_FILE)) {
-
-			// Configure pretty printing for packet visualization
-			pcap.setPacketFormatter(new PacketFormat());
+		try (NetPcap pcap = NetPcap.openOffline(PCAP_FILE)) {
 
 			// Limit packet processing to first 10 packets for this example
 			final int PACKET_COUNT = 1;
@@ -120,20 +113,9 @@ public class Example1_CapturePacketsAndPrintHeaders {
 			final Ethernet ethernet = new Ethernet();
 			final Ip4 ip4 = new Ip4();
 			final Tcp tcp = new Tcp();
-			final Ip4RouterAlertOption router = new Ip4RouterAlertOption();
 
 			// Process packets and inspect headers using a lambda callback
-			pcap.dispatchPacket(PACKET_COUNT, (String user, Packet packet) -> {
-
-				try {
-//				System.out.println(packet.descriptor().toString(Detail.HIGH));
-					System.out.println(packet.toString(Detail.HIGH));
-				} catch (Throwable e) {
-					while (e.getCause() != null)
-						e = e.getCause();
-					
-					e.printStackTrace();
-				}
+			pcap.dispatch(PACKET_COUNT, (String user, Packet packet) -> {
 
 				// Check and display Ethernet header if present
 				if (packet.hasHeader(ethernet))
@@ -142,10 +124,6 @@ public class Example1_CapturePacketsAndPrintHeaders {
 				// Check and display IPv4 header if present
 				if (packet.hasHeader(ip4))
 					System.out.println(ip4);
-
-				// Check and display IPv4 Router Alert option if present
-				if (packet.hasHeader(ip4) && ip4.hasOption(router))
-					System.out.println(router);
 
 				// Check and display TCP header if present
 				if (packet.hasHeader(tcp))

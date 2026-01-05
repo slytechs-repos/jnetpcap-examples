@@ -15,6 +15,26 @@
 > </dependency>
 > ```
 >
+> ### JVM Arguments
+>
+> jNetPcap uses the Java Foreign Function & Memory (FFM) API. The following JVM arguments are required:
+>
+> ```bash
+> --enable-native-access=com.slytechs.sdk.jnetpcap,com.slytechs.sdk.common
+> ```
+>
+> ### License Activation
+>
+> The jNetPcap SDK comes with a pre-installed unlimited community license. Call `activateLicense()` once at application startup before any capture operations. Internet connectivity is required for activation.
+>
+> ```java
+> public static void main(String[] args) throws PcapException {
+>     NetPcap.activateLicense();  // Required - activates community license
+>     
+>     // Now proceed with capture...
+> }
+> ```
+>
 > ### Running Examples
 >
 > ```bash
@@ -23,7 +43,7 @@
 > cd jnetpcap-examples
 > 
 > # Run a specific example
-> mvn compile exec:java -Dexec.mainClass="com.slytechs.sdk.jnetpcap.examples.Example1_CapturePacketsAndPrintHeaders"
+> mvn compile exec:java -Dexec.mainClass="com.slytechs.sdk.jnetpcap.examples.ProtocolDissection"
 > ```
 >
 > ### Requirements
@@ -35,92 +55,241 @@
 >
 > ### Basic Capture
 >
-> **Example1_CapturePacketsAndPrintHeaders** - Offline capture with protocol header inspection
+> **LiveCaptureWithFilter** - Live capture with BPF filtering and configuration
 >
 > ```java
-> try (NetPcap pcap = NetPcap.openOffline("capture.pcap")) {
->     
->     // Pre-allocate headers for zero-allocation access
->     final Ethernet ethernet = new Ethernet();
->     final Ip4 ip4 = new Ip4();
->     final Tcp tcp = new Tcp();
+> NetPcap.activateLicense();
 > 
->     pcap.dispatch(10, (String user, Packet packet) -> {
->         
->         if (packet.hasHeader(ethernet))
->             System.out.println(ethernet);
-> 
->         if (packet.hasHeader(ip4))
->             System.out.println(ip4);
-> 
->         if (packet.hasHeader(tcp))
->             System.out.println(tcp);
-> 
->     }, "Example1");
-> }
-> ```
->
-> **Example6_smallest_footprint** - Minimal code to capture and print packets
->
-> ```java
-> try (var pcap = NetPcap.openOffline("capture.pcap")) {
->     pcap.dispatch(System.out::println);
-> }
-> ```
->
-> ### Live Capture
->
-> **Example2_LiveCaptureAndFiltering** - Live capture with BPF filtering
->
-> ```java
-> try (NetPcap pcap = NetPcap.openLive()) {
->     pcap.setSnaplen(2048)
->         .setTimeout(10_000)
->         .setPromiscuous(true)
+> try (NetPcap pcap = NetPcap.create(device)) {
+>     pcap.setSnaplen(128)
+>         .setPromisc(true)
+>         .setTimeout(Duration.ofMillis(100))
+>         .setImmediateMode(true)
 >         .activate();
 > 
->     pcap.setFilter("tcp port 80");
+>     pcap.setFilter("tcp port 80 or tcp port 443");
 > 
->     pcap.dispatch(100, (String user, Packet packet) -> {
->         // Process packets...
->     }, "LiveCapture");
+>     pcap.dispatch(100, packet -> {
+>         System.out.printf("[%s] %d bytes%n",
+>                 packet.timestampInfo(),
+>                 packet.captureLength());
+>     });
 > }
 > ```
 >
-> ### Raw Packet Access
->
-> **Example3_FilterRawPackets** - Low-level access using base Pcap API
+> **OfflineFileReading** - Read pcap/pcapng files
 >
 > ```java
-> try (Pcap pcap = Pcap.openOffline("capture.pcap")) {
->     pcap.setFilter(pcap.compile("tcp", true));
+> NetPcap.activateLicense();
 > 
->     pcap.dispatch(10, (String user, MemorySegment header, MemorySegment packet) -> {
->         // Direct memory access to packet data
->     }, "RawCapture");
+> try (NetPcap pcap = NetPcap.openOffline("pcaps/HTTP.cap")) {
+>     pcap.loop(-1, packet -> {
+>         System.out.printf("Captured: %d bytes%n", packet.captureLength());
+>     });
 > }
 > ```
 >
-> ### Protocol Analysis
->
-> **UsecaseIcmpTypeLookup** - Working with ICMP message types
+> **InterfaceEnumeration** - List available network devices
 >
 > ```java
-> final Icmp4 icmp4 = new Icmp4();
-> final Icmp4Echo echo = new Icmp4Echo();
+> NetPcap.activateLicense();
 > 
-> pcap.dispatch(packet -> {
->     if (packet.hasHeader(icmp4)) {
->         System.out.printf("ICMP type=%d code=%d%n", icmp4.type(), icmp4.code());
+> List<PcapIf> devices = NetPcap.findAllDevs();
+> for (PcapIf dev : devices) {
+>     System.out.printf("%s - %s%n", dev.name(), dev.description().orElse(""));
+> }
+> ```
+>
+> ### Protocol Dissection
+>
+> **ProtocolDissection** - Full header access with zero-allocation pattern
+>
+> ```java
+> NetPcap.activateLicense();
+> 
+> PacketSettings settings = new PacketSettings().dissect();
+> 
+> // Pre-allocate headers (reused for every packet - zero allocation)
+> Ethernet eth = new Ethernet();
+> Ip4 ip4 = new Ip4();
+> Tcp tcp = new Tcp();
+> 
+> try (NetPcap pcap = NetPcap.openOffline("pcaps/HTTP.cap", settings)) {
+>     pcap.loop(10, packet -> {
+>         if (packet.hasHeader(eth)) {
+>             System.out.printf("Ethernet: %s → %s%n", eth.src(), eth.dst());
+>         }
+> 
+>         if (packet.hasHeader(ip4)) {
+>             System.out.printf("IPv4: %s → %s%n", ip4.src(), ip4.dst());
+>         }
+> 
+>         if (packet.hasHeader(tcp)) {
+>             System.out.printf("TCP: %d → %d [%s]%n",
+>                     tcp.srcPort(), tcp.dstPort(),
+>                     tcp.isSyn() ? "SYN" : "");
+>         }
+>     });
+> }
+> ```
+>
+> **PacketCounter** - Count packets by protocol type
+>
+> ```java
+> NetPcap.activateLicense();
+> 
+> PacketSettings settings = new PacketSettings().dissect();
+> Ip4 ip4 = new Ip4();
+> Tcp tcp = new Tcp();
+> Udp udp = new Udp();
+> 
+> Map<String, Long> stats = new HashMap<>();
+> 
+> try (NetPcap pcap = NetPcap.openOffline(filename, settings)) {
+>     pcap.loop(-1, (counters, packet) -> {
+>         if (packet.hasHeader(ip4)) counters.merge("ipv4", 1L, Long::sum);
+>         if (packet.hasHeader(tcp)) counters.merge("tcp", 1L, Long::sum);
+>         if (packet.hasHeader(udp)) counters.merge("udp", 1L, Long::sum);
+>     }, stats);
+> }
+> ```
+>
+> ### Packet Persistence
+>
+> **SelectivePersistence** - Keep packets beyond callback scope
+>
+> ```java
+> Queue<Packet> synPackets = new ConcurrentLinkedQueue<>();
+> 
+> pcap.loop(-1, packet -> {
+>     if (packet.hasHeader(tcp) && tcp.isSyn() && !tcp.isAck()) {
+>         // Persist packet for later processing
+>         Packet keeper = packet.persist();
+>         synPackets.add(keeper);
 >     }
->     
->     if (packet.hasHeader(echo)) {
->         System.out.printf("Echo id=%d seq=%d%n", echo.id(), echo.sequence());
+> });
+> 
+> // Process persisted packets outside callback
+> Packet packet;
+> while ((packet = synPackets.poll()) != null) {
+>     // Process...
+>     packet.recycle();  // Return to pool when done
+> }
+> ```
+>
+> **PooledCapture** - High-volume persistence with packet pools
+>
+> ```java
+> PoolSettings poolSettings = new PoolSettings()
+>         .capacity(1000)
+>         .segmentSize(9000)
+>         .preallocate(true);
+> 
+> Pool<Packet> persistPool = PacketPool.ofFixed(poolSettings);
+> 
+> pcap.loop(-1, packet -> {
+>     if (persistPool.available() > 0) {
+>         Packet pooled = packet.persistTo(persistPool);
+>         workQueue.add(pooled);
 >     }
 > });
 > ```
 >
+> ### Multi-threaded Processing
+>
+> **ProducerConsumer** - Capture thread with worker threads
+>
+> ```java
+> BlockingQueue<Packet> workQueue = new LinkedBlockingQueue<>(10000);
+> 
+> // Capture thread
+> pcap.dispatch(100, packet -> {
+>     if (packet.hasHeader(tcp)) {
+>         Packet persisted = packet.persist();
+>         workQueue.offer(persisted);
+>     }
+> });
+> 
+> // Worker thread (each needs own header instances)
+> void workerThread() {
+>     Ip4 ip4 = new Ip4();  // Thread-local headers
+>     Tcp tcp = new Tcp();
+>     
+>     while (running) {
+>         Packet packet = workQueue.poll(100, TimeUnit.MILLISECONDS);
+>         if (packet != null) {
+>             if (packet.hasHeader(ip4) && packet.hasHeader(tcp)) {
+>                 // Process...
+>             }
+>             packet.recycle();
+>         }
+>     }
+> }
+> ```
+>
+> ### Advanced
+>
+> **PcapDumperExample** - Write packets to file
+>
+> ```java
+> try (NetPcap pcap = NetPcap.create(device, settings)) {
+>     pcap.activate();
+>     
+>     try (PcapDumper dumper = pcap.dumpOpen("output.pcap")) {
+>         pcap.dispatch(100, packet -> {
+>             MemorySegment hdr = packet.descriptor().boundMemory().segment();
+>             MemorySegment pkt = packet.boundMemory().segment();
+>             dumper.dump(hdr, pkt);
+>         });
+>         dumper.flush();
+>     }
+> }
+> ```
+>
+> **RawPcapCapture** - Low-level Pcap bindings without dissection
+>
+> ```java
+> Pcap.activateLicense();
+> 
+> try (Pcap pcap = Pcap.create(device)) {
+>     pcap.activate();
+>     
+>     PcapHeaderABI abi = pcap.getPcapHeaderABI();
+>     
+>     pcap.loop(100, (String user, MemorySegment header, MemorySegment data) -> {
+>         int capLen = abi.captureLength(header);
+>         long tsSec = abi.tvSec(header);
+>         // Direct memory access...
+>     }, "");
+> }
+> ```
+>
 > ## Key Concepts
+>
+> ### Configuration Separation
+>
+> jNetPcap separates two configuration concerns:
+>
+> | Configuration       | Purpose            | Examples                          |
+> | ------------------- | ------------------ | --------------------------------- |
+> | **NetPcap setters** | Capture properties | snaplen, timeout, filter, promisc |
+> | **PacketSettings**  | Packet structure   | dissection mode, memory strategy  |
+>
+> ```java
+> // PacketSettings - how packets are structured
+> PacketSettings settings = new PacketSettings().dissect();
+> 
+> try (NetPcap pcap = NetPcap.create("eth0", settings)) {
+>     // NetPcap setters - capture properties
+>     pcap.setSnaplen(65535)
+>         .setTimeout(Duration.ofSeconds(1))
+>         .setPromisc(true)
+>         .activate();
+> 
+>     pcap.setFilter("tcp port 80");
+>     pcap.loop(-1, handler);
+> }
+> ```
 >
 > ### Header Reuse Pattern
 >
@@ -134,73 +303,72 @@
 > pcap.dispatch(packet -> {
 >     // hasHeader() binds the header to packet data
 >     if (packet.hasHeader(ip4)) {
->         // ip4 now references this packet's IPv4 header
->         System.out.println(ip4.src());  // Source IP
->     }
-> });
-> // After dispatch returns, headers are unbound
-> ```
->
-> ### Header Lifecycle
->
-> Headers are only valid within the dispatch callback. After the callback returns, headers are unbound and must not be accessed. To retain header data beyond the callback, use `clone()`:
->
-> ```java
-> Ip4 savedHeader = null;
-> 
-> pcap.dispatch(packet -> {
->     if (packet.hasHeader(ip4)) {
->         savedHeader = ip4.clone();  // Deep copy, safe to use later
+>         System.out.println(ip4.src());
 >     }
 > });
 > ```
 >
-> ### Packet Descriptor
+> ### Packet Persistence
 >
-> Every packet includes a descriptor with capture metadata:
+> Packets in callbacks are bound to native buffers and only valid within the callback:
 >
-> ```java
-> pcap.dispatch(packet -> {
->     var desc = packet.descriptor();
->     
->     System.out.printf("Frame #%d: caplen=%d wirelen=%d timestamp=%s%n",
->         desc.frameNo(),
->         packet.captureLength(),
->         packet.wireLength(),
->         packet.timestamp());
-> });
-> ```
+> | Method            | Use Case                   | Memory               |
+> | ----------------- | -------------------------- | -------------------- |
+> | `persist()`       | Queue for later processing | Copies to new buffer |
+> | `persistTo(pool)` | High-volume capture        | Uses pool memory     |
+> | `copy()`          | Independent lifecycle      | Full deep copy       |
+> | `recycle()`       | Return pooled packet       | Returns to pool      |
+>
+> ### Thread Safety
+>
+> - **NetPcap/Pcap**: Single-threaded only
+> - **Header instances**: Not thread-safe, use per-thread instances
+> - **Persisted packets**: Safe to pass between threads
 >
 > ## What's Included
 >
 > The `jnetpcap-sdk` dependency provides:
 >
-> | Module             | Description                      |
-> | ------------------ | -------------------------------- |
-> | jnetpcap-api       | High-level NetPcap API           |
-> | jnetpcap-bindings  | libpcap FFM bindings             |
-> | sdk-protocol-core  | Dissection framework             |
-> | sdk-protocol-tcpip | Ethernet, IPv4/6, TCP, UDP, ICMP |
+> | Module             | Description                                 |
+> | ------------------ | ------------------------------------------- |
+> | jnetpcap-api       | High-level NetPcap API                      |
+> | jnetpcap-bindings  | libpcap FFM bindings                        |
+> | sdk-protocol-core  | Packet, Header, PacketSettings, descriptors |
+> | sdk-protocol-tcpip | Ethernet, IPv4/6, TCP, UDP                  |
 >
 > ### Optional Protocol Packs
 >
 > For additional protocols, add explicitly:
 >
 > ```xml
-> <!-- HTTP, TLS, DNS over HTTPS -->
+> <!-- HTTP, TLS, QUIC, HTTP/2, HTTP/3 -->
 > <dependency>
 >     <groupId>com.slytechs.sdk</groupId>
 >     <artifactId>sdk-protocol-web</artifactId>
 >     <version>3.0.0</version>
 > </dependency>
+> 
+> <!-- Routing, STP, discovery protocols -->
+> <dependency>
+>     <groupId>com.slytechs.sdk</groupId>
+>     <artifactId>sdk-protocol-infrastructure</artifactId>
+>     <version>3.0.0</version>
+> </dependency>
 > ```
 >
-> ## Source Code
+> ## Example Files
 >
-> Browse the example source:
+> The repository includes sample pcap files in the `pcaps/` directory:
 >
-> - [Basic Examples](https://claude.ai/chat/src/main/java/com/slytechs/sdk/jnetpcap/examples/)
-> - [Use Cases](https://claude.ai/chat/src/main/java/com/slytechs/sdk/jnetpcap/examples/usecase/)
+> | File                              | Description            |
+> | --------------------------------- | ---------------------- |
+> | HTTP.cap                          | HTTP traffic           |
+> | varied-traffic-capture-lan.pcapng | Mixed LAN traffic      |
+> | IPv4-ipf.pcapng                   | IPv4 fragmentation     |
+> | IPv4-ipf2.pcapng                  | IPv4 fragmentation     |
+> | ipv6-udp-fragmented.pcap          | IPv6 UDP fragmentation |
+> | 6to4.pcap                         | IPv6 tunneling         |
+> | sr-header.pcap                    | Segment routing        |
 >
 > ## Resources
 >

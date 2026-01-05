@@ -100,7 +100,7 @@ public class HttpTrafficAnalyzer {
 			// Filter for HTTP (80) and HTTPS (443) traffic
 			pcap.setFilter("tcp port 80 or tcp port 443");
 
-			pcap.loop(-1, packet -> {
+			pcap.loop(100, packet -> {
 				if (packet.hasHeader(ip4) && packet.hasHeader(tcp)) {
 					String srcIp = ip4.src().toString();
 					int srcPort = tcp.srcPort();

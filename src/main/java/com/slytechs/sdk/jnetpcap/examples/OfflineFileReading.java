@@ -32,7 +32,7 @@ import com.slytechs.sdk.jnetpcap.PcapException;
  */
 public class OfflineFileReading {
 
-    private static final String DEFAULT_FILE = "pcaps/varied-traffic-capture-lan.pcapng";
+    private static final String DEFAULT_FILE = "pcaps/HTTP.cap";
 
     public static void main(String[] args) throws PcapException {
         String filename = args.length > 0 ? args[0] : DEFAULT_FILE;

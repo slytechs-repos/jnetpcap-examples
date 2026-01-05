@@ -69,6 +69,7 @@ public class ProtocolDissection {
             final int[] count = {0};
 
             pcap.loop(10, packet -> {  // First 10 packets only
+//            	packet.descriptor().setTimestampUnit(TimestampUnit.EPOCH_MICRO);
                 count[0]++;
                 System.out.printf("=== Packet #%d ===%n", count[0]);
                 System.out.printf("Timestamp: %s%n", packet.timestampInfo());

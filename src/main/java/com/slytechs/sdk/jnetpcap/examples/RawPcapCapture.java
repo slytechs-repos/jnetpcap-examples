@@ -19,6 +19,7 @@ import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 import java.time.Duration;
 
+import com.slytechs.jnet.jnetpcap.api.NetPcap;
 import com.slytechs.sdk.jnetpcap.Pcap;
 import com.slytechs.sdk.jnetpcap.PcapException;
 import com.slytechs.sdk.jnetpcap.PcapHeader;
@@ -47,6 +48,8 @@ public class RawPcapCapture {
 	}
 
 	public void run() throws PcapException {
+        NetPcap.activateLicense();
+
 		String device = Pcap.findAllDevs()
 				.stream()
 				.filter(d -> d.isUp() && !d.isLoopback())

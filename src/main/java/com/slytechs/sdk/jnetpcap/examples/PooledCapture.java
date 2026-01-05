@@ -36,21 +36,25 @@ import com.slytechs.sdk.protocol.tcpip.tcp.Tcp;
  * For high-rate capture where many packets need to be persisted, using
  * pools avoids allocation overhead and provides predictable memory usage.
  * 
- * persistTo(pool) vs persist():
- * - persist(): Auto-allocates memory, may trigger GC under load
- * - persistTo(pool): Uses pre-allocated pool memory, predictable performance
+ * <h2>Pool Types</h2>
+ * <ul>
+ * <li>{@code PacketPool.ofFixedSize(size)} - Single uniform packet size</li>
+ * <li>{@code PacketPool.ofDefaultBuckets()} - Network-optimized bucket sizes</li>
+ * <li>{@code PacketPool.ofBucketed(sizes...)} - Custom bucket sizes</li>
+ * </ul>
  * 
- * Pool configuration:
- * - capacity: Maximum number of packets in pool
- * - segmentSize: Memory per packet (should match max packet size)
- * - preallocate: Allocate all memory upfront vs on-demand
+ * <h2>persistTo(pool) vs persist()</h2>
+ * <ul>
+ * <li>{@code persist()} - Auto-allocates memory, may trigger GC under load</li>
+ * <li>{@code persistTo(pool)} - Uses pre-allocated pool memory, predictable performance</li>
+ * </ul>
  *
  * @author Mark Bednarczyk
  * @author Sly Technologies Inc.
  */
 public class PooledCapture {
 
-    private static final String DEFAULT_FILE = "pcaps/varied-traffic-capture-lan.pcapng";
+    private static final String DEFAULT_FILE = "pcaps/HTTP.cap";
 
     public static void main(String[] args) throws PcapException {
         String filename = args.length > 0 ? args[0] : DEFAULT_FILE;
@@ -64,15 +68,16 @@ public class PooledCapture {
         System.out.println();
 
         // Configure packet pool for persistence
+        // - capacity: Total number of packets in pool
+        // - preallocate: Allocate all memory upfront for predictable performance
         PoolSettings poolSettings = new PoolSettings()
-                .capacity(1000)          // Max 1000 packets
-                .segmentSize(9000)       // 9KB per packet (jumbo frame support)
-                .preallocate(true);      // Allocate all memory upfront
+                .capacity(100)
+                .preallocate(true);
 
-        Pool<Packet> persistPool = PacketPool.ofFixed(poolSettings);
+        // Create fixed-size pool - all packets use same memory size (9KB for jumbo frames)
+        Pool<Packet> persistPool = PacketPool.ofFixedSize(poolSettings, 9000);
 
-        System.out.printf("Pool created: capacity=%d, segmentSize=%d%n",
-                poolSettings.maxCapacity(), poolSettings.segmentSize());
+        System.out.printf("Pool created: capacity=%d, segmentSize=9000%n", poolSettings.maxCapacity());
         System.out.printf("Pool available: %d%n", persistPool.available());
         System.out.println();
 

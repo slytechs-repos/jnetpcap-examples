@@ -16,6 +16,7 @@
 package com.slytechs.sdk.jnetpcap.examples;
 
 import java.io.IOException;
+import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -23,6 +24,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.slytechs.jnet.jnetpcap.api.NetPcap;
 import com.slytechs.sdk.jnetpcap.PcapDumper;
 import com.slytechs.sdk.jnetpcap.PcapException;
+import com.slytechs.sdk.jnetpcap.internal.PcapHeaderABI;
 import com.slytechs.sdk.protocol.core.PacketSettings;
 import com.slytechs.sdk.protocol.tcpip.ip.Ip4;
 import com.slytechs.sdk.protocol.tcpip.tcp.Tcp;
@@ -30,101 +32,122 @@ import com.slytechs.sdk.protocol.tcpip.tcp.Tcp;
 /**
  * Example 16: Pcap Dumper
  * 
- * Demonstrates writing captured packets to a pcap file using PcapDumper. Useful
- * for: - Recording traffic for later analysis - Filtering and saving specific
- * packets - Creating test captures
+ * Demonstrates writing captured packets to a pcap file using PcapDumper.
+ * Useful for:
+ * - Recording traffic for later analysis
+ * - Filtering and saving specific packets
+ * - Creating test captures
  * 
  * This example captures TCP SYN packets and saves them to a file.
+ * 
+ * Note: PcapDumper requires the original pcap header format, so we must
+ * convert the packet's descriptor back to a PcapHeader structure.
  *
  * @author Mark Bednarczyk
  * @author Sly Technologies Inc.
  */
 public class PcapDumperExample {
 
-	private static final String OUTPUT_FILE = "syn_packets.pcap";
-	private static final int CAPTURE_COUNT = 100;
+    private static final String OUTPUT_FILE = "syn_packets.pcap";
+    private static final int CAPTURE_COUNT = 100;
 
-	public static void main(String[] args) throws PcapException {
-		new PcapDumperExample().run();
-	}
+    public static void main(String[] args) throws PcapException {
+        new PcapDumperExample().run();
+    }
 
-	public void run() throws PcapException {
-		String device = NetPcap.findAllDevs()
-				.stream()
-				.filter(d -> d.isUp() && !d.isLoopback())
-				.findFirst()
-				.map(d -> d.name())
-				.orElseThrow(() -> new IllegalStateException("No suitable network interface found"));
+    public void run() throws PcapException {
+        NetPcap.activateLicense();
 
-		System.out.printf("Capturing TCP SYN packets on: %s%n", device);
-		System.out.printf("Output file: %s%n", OUTPUT_FILE);
-		System.out.printf("Target count: %d packets%n", CAPTURE_COUNT);
-		System.out.println();
+        String device = NetPcap.findAllDevs()
+                .stream()
+                .filter(d -> d.isUp() && !d.isLoopback())
+                .findFirst()
+                .map(d -> d.name())
+                .orElseThrow(() -> new IllegalStateException("No suitable network interface found"));
 
-		PacketSettings settings = new PacketSettings()
-				.dissect();
+        System.out.printf("Capturing TCP SYN packets on: %s%n", device);
+        System.out.printf("Output file: %s%n", OUTPUT_FILE);
+        System.out.printf("Target count: %d packets%n", CAPTURE_COUNT);
+        System.out.println();
 
-		Ip4 ip4 = new Ip4();
-		Tcp tcp = new Tcp();
+        PacketSettings settings = new PacketSettings()
+                .dissect();
 
-		AtomicInteger synCount = new AtomicInteger();
-		AtomicInteger totalCount = new AtomicInteger();
+        Ip4 ip4 = new Ip4();
+        Tcp tcp = new Tcp();
 
-		try (NetPcap pcap = NetPcap.create(device, settings)) {
+        AtomicInteger synCount = new AtomicInteger();
+        AtomicInteger totalCount = new AtomicInteger();
 
-			pcap.setSnaplen(128)
-					.setPromisc(true)
-					.setTimeout(Duration.ofMillis(100))
-					.activate();
+        try (NetPcap pcap = NetPcap.create(device, settings)) {
 
-			pcap.setFilter("tcp");
+            pcap.setSnaplen(128)
+                .setPromisc(true)
+                .setTimeout(Duration.ofMillis(100))
+                .activate();
 
-			// Open dumper for writing
-			try (PcapDumper dumper = pcap.dumpOpen(OUTPUT_FILE)) {
+            pcap.setFilter("tcp");
 
-				System.out.println("Capturing...");
+            // Open dumper for writing
+            try (PcapDumper dumper = pcap.dumpOpen(OUTPUT_FILE)) {
 
-				while (synCount.get() < CAPTURE_COUNT) {
-					pcap.dispatch(100, packet -> {
-						totalCount.incrementAndGet();
+                System.out.println("Capturing...");
 
-						// Check for TCP SYN
-						if (packet.hasHeader(ip4) && packet.hasHeader(tcp)) {
-							if (tcp.isSyn() && !tcp.isAck()) {
-								// Write packet to file
-								try {
-									MemorySegment hdr = packet.descriptor().boundMemory().segment();
-									MemorySegment pkt = packet.boundMemory().segment();
-									dumper.dump(hdr, pkt);
+                // Allocate pcap header for conversion
+                // PcapDumper expects the native pcap_pkthdr format
+                MemorySegment hdrSegment = Arena.ofAuto().allocate(24);
+                PcapHeaderABI abi = PcapHeaderABI.PADDED_LE;
 
-								} catch (IOException e) {
-									e.printStackTrace();
-									return;
-								}
+                while (synCount.get() < CAPTURE_COUNT) {
+                    pcap.dispatch(100, packet -> {
+                        totalCount.incrementAndGet();
 
-								int count = synCount.incrementAndGet();
-								System.out.printf("[%d] SYN: %s:%d → %s:%d%n",
-										count,
-										ip4.src(), tcp.srcPort(),
-										ip4.dst(), tcp.dstPort());
-							}
-						}
-					});
-				}
+                        // Check for TCP SYN
+                        if (packet.hasHeader(ip4) && packet.hasHeader(tcp)) {
+//                            if (tcp.isSyn() && !tcp.isAck()) {
 
-				// Flush to ensure all packets are written
-				dumper.flush();
-			}
+                                // Convert packet descriptor to pcap header format
+                                var desc = packet.descriptor();
+                                long ts = desc.timestamp();
+                                var tsu = desc.timestampUnit();
 
-		} catch (Exception e) {
-			e.printStackTrace();
-			return;
-		}
+                                abi.tvSec(hdrSegment, tsu.toEpochSecond(ts));
+                                abi.tvUsec(hdrSegment, tsu.toMicroAdjustment(ts));
+                                abi.captureLength(hdrSegment, packet.captureLength());
+                                abi.wireLength(hdrSegment, packet.wireLength());
 
-		System.out.println();
-		System.out.println("=== Capture Complete ===");
-		System.out.printf("Total packets seen: %,d%n", totalCount.get());
-		System.out.printf("SYN packets saved: %,d%n", synCount.get());
-		System.out.printf("Output file: %s%n", OUTPUT_FILE);
-	}
+                                // Write packet to file
+                                try {
+                                    MemorySegment pktData = packet.boundMemory().segment();
+                                    dumper.dump(hdrSegment, pktData);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                    return;
+                                }
+
+                                int count = synCount.incrementAndGet();
+                                System.out.printf("[%d] SYN: %s:%d → %s:%d%n",
+                                        count,
+                                        ip4.src(), tcp.srcPort(),
+                                        ip4.dst(), tcp.dstPort());
+//                            }
+                        }
+                    });
+                }
+
+                // Flush to ensure all packets are written
+                dumper.flush();
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        System.out.println();
+        System.out.println("=== Capture Complete ===");
+        System.out.printf("Total packets seen: %,d%n", totalCount.get());
+        System.out.printf("SYN packets saved: %,d%n", synCount.get());
+        System.out.printf("Output file: %s%n", OUTPUT_FILE);
+    }
 }

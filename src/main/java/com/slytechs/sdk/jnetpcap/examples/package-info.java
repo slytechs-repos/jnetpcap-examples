@@ -46,7 +46,7 @@
  * <p>
  * The jNetPcap SDK comes with a pre-installed unlimited community license. Before 
  * using any jNetPcap functionality, you must activate the license by calling
- * {@link com.slytechs.jnet.jnetpcap.api.NetPcap#activateLicense()}. This should be
+ * {@link com.slytechs.sdk.jnetpcap.api.NetPcap#activateLicense()}. This should be
  * done once at application startup, before any capture operations. Internet 
  * connectivity is required for license activation.
  * </p>
@@ -134,7 +134,7 @@
  *
  * @author Mark Bednarczyk
  * @author Sly Technologies Inc.
- * @see com.slytechs.jnet.jnetpcap.api.NetPcap
+ * @see com.slytechs.sdk.jnetpcap.api.NetPcap
  * @see com.slytechs.sdk.protocol.core.PacketSettings
  * @see com.slytechs.sdk.jnetpcap.Pcap
  * @since 3.0.0

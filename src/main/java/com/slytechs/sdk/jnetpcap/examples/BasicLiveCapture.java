@@ -15,8 +15,8 @@
  */
 package com.slytechs.sdk.jnetpcap.examples;
 
-import com.slytechs.jnet.jnetpcap.api.NetPcap;
 import com.slytechs.sdk.jnetpcap.PcapException;
+import com.slytechs.sdk.jnetpcap.api.NetPcap;
 
 /**
  * Example 1: Basic Live Capture

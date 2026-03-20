@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.slytechs.jnet.jnetpcap.api.NetPcap;
 import com.slytechs.sdk.jnetpcap.PcapException;
+import com.slytechs.sdk.jnetpcap.api.NetPcap;
 import com.slytechs.sdk.protocol.core.PacketSettings;
 import com.slytechs.sdk.protocol.tcpip.ip.Ip4;
 import com.slytechs.sdk.protocol.tcpip.tcp.Tcp;

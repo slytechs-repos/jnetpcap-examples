@@ -21,9 +21,9 @@ import java.lang.foreign.MemorySegment;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.slytechs.jnet.jnetpcap.api.NetPcap;
 import com.slytechs.sdk.jnetpcap.PcapDumper;
 import com.slytechs.sdk.jnetpcap.PcapException;
+import com.slytechs.sdk.jnetpcap.api.NetPcap;
 import com.slytechs.sdk.jnetpcap.internal.PcapHeaderABI;
 import com.slytechs.sdk.protocol.core.PacketSettings;
 import com.slytechs.sdk.protocol.tcpip.ip.Ip4;

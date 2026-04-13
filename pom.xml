@@ -1,84 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Copyright 2005-2026 Sly Technologies Inc.
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.slytechs.sdk</groupId>
-	<artifactId>jnetpcap-examples</artifactId>
-	<version>3.0.0-SNAPSHOT</version>
-	<packaging>jar</packaging>
+    <parent>
+        <groupId>com.slytechs.sdk</groupId>
+        <artifactId>sdk-parent</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+        <relativePath>../sdk-parent/pom.xml</relativePath>
+    </parent>
 
-	<name>jNetPcap SDK Examples</name>
-	<description>Example code for jNetPcap SDK</description>
-	<url>https://github.com/slytechs-repos/jnetpcap-examples</url>
+    <artifactId>jnetpcap-examples</artifactId>
+    <packaging>jar</packaging>
 
-	<licenses>
-		<license>
-			<name>Apache License, Version 2.0</name>
-			<url>https://www.apache.org/licenses/LICENSE-2.0</url>
-		</license>
-	</licenses>
+    <name>jNetPcap SDK Examples</name>
+    <description>Example applications demonstrating jNetPcap SDK usage patterns for
+        packet capture, protocol dissection, and network analysis.</description>
+    <url>https://github.com/slytechs-repos/jnetpcap-examples</url>
 
-	<organization>
-		<name>Sly Technologies Inc</name>
-		<url>https://www.slytechs.com</url>
-	</organization>
+    <scm>
+        <connection>scm:git:git://github.com/slytechs-repos/jnetpcap-examples.git</connection>
+        <developerConnection>scm:git:ssh://github.com:slytechs-repos/jnetpcap-examples.git</developerConnection>
+        <url>https://github.com/slytechs-repos/jnetpcap-examples</url>
+    </scm>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.release>22</maven.compiler.release>
-		<sdk.version>3.0.0-SNAPSHOT</sdk.version>
-	</properties>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.slytechs.sdk</groupId>
+                <artifactId>sdk-bom</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
-	<dependencies>
-		<!-- The SDK starter - pulls everything needed -->
-		<dependency>
-			<groupId>com.slytechs.sdk</groupId>
-			<artifactId>jnetpcap-sdk</artifactId> 
-			<version>${sdk.version}</version>
-			<type>pom</type>
-		</dependency>
-
-        <!-- Logging facade dependencies -->
-        <!-- Logging facade dependencies -->
+    <dependencies>
+        <!-- Umbrella dep - pulls api, bindings, and protocol packs -->
         <dependency>
-		    <groupId>org.slf4j</groupId>
-		    <artifactId>slf4j-api</artifactId>
-            <version>2.0.17</version>  <!-- Latest stable as of early 2026 -->
-		</dependency>
-		<!-- Logback binding - for development/testing only -->
-		<dependency>
-		    <groupId>ch.qos.logback</groupId>
-		    <artifactId>logback-classic</artifactId>
-		    <version>1.5.6</version>  <!-- Latest stable -->
-		</dependency>    
-	</dependencies>
+            <groupId>com.slytechs.sdk</groupId>
+            <artifactId>jnetpcap-sdk</artifactId>
+            <type>pom</type>
+        </dependency>
 
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.12.1</version>
-			</plugin>
+        <!-- Logging facade -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
 
-			<!-- Run examples: mvn exec:java -Dexec.mainClass="com.slytechs.sdk.jnetpcap.examples.Example1_CapturePacketsAndPrintHeaders" -->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>3.1.0</version>
-				<configuration>
-					<executable>java</executable>
-					<arguments>
-						<argument>--enable-preview</argument>
-						<argument>--enable-native-access=com.slytechs.sdk.jnetpcap</argument>
-						<argument>-classpath</argument>
-						<classpath />
-						<argument>${exec.mainClass}</argument>
-					</arguments>
-				</configuration>
-			</plugin>
-		</plugins>
-	</build>
+        <!-- Logback runtime - examples only, not for library consumers -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+            <!-- Run examples:
+                 mvn exec:java -Dexec.mainClass="com.slytechs.sdk.jnetpcap.examples.Example1_CapturePacketsAndPrintHeaders" -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <executable>java</executable>
+                    <arguments>
+                        <argument>--enable-preview</argument>
+                        <argument>--enable-native-access=com.slytechs.sdk.jnetpcap</argument>
+                        <argument>-classpath</argument>
+                        <classpath />
+                        <argument>${exec.mainClass}</argument>
+                    </arguments>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>

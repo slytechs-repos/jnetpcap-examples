@@ -34,6 +34,10 @@
         packet capture, protocol dissection, and network analysis.</description>
     <url>https://github.com/slytechs-repos/jnetpcap-examples</url>
 
+	<properties>
+	    <maven.deploy.skip>true</maven.deploy.skip>
+	</properties>
+
     <scm>
         <connection>scm:git:git://github.com/slytechs-repos/jnetpcap-examples.git</connection>
         <developerConnection>scm:git:ssh://github.com:slytechs-repos/jnetpcap-examples.git</developerConnection>

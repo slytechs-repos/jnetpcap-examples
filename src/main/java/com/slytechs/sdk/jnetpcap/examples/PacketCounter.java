@@ -18,8 +18,8 @@ package com.slytechs.sdk.jnetpcap.examples;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.slytechs.jnet.jnetpcap.api.NetPcap;
 import com.slytechs.sdk.jnetpcap.PcapException;
+import com.slytechs.sdk.jnetpcap.api.NetPcap;
 import com.slytechs.sdk.protocol.core.PacketSettings;
 import com.slytechs.sdk.protocol.tcpip.ip.Ip4;
 import com.slytechs.sdk.protocol.tcpip.ip.Ip6;
@@ -48,8 +48,6 @@ public class PacketCounter {
     }
 
     public void run(String filename) throws PcapException {
-        NetPcap.activateLicense();
-
         System.out.printf("Counting protocols in: %s%n", filename);
 
         // Enable protocol dissection

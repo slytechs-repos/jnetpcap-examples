@@ -17,9 +17,9 @@ package com.slytechs.sdk.jnetpcap.examples;
 
 import java.util.List;
 
-import com.slytechs.jnet.jnetpcap.api.NetPcap;
 import com.slytechs.sdk.jnetpcap.PcapException;
 import com.slytechs.sdk.jnetpcap.PcapIf;
+import com.slytechs.sdk.jnetpcap.api.NetPcap;
 
 /**
  * Example 17: Interface Enumeration

@@ -17,8 +17,8 @@ package com.slytechs.sdk.jnetpcap.examples;
 
 import java.time.Duration;
 
-import com.slytechs.jnet.jnetpcap.api.NetPcap;
 import com.slytechs.sdk.jnetpcap.PcapException;
+import com.slytechs.sdk.jnetpcap.api.NetPcap;
 
 /**
  * Example 2: Live Capture with Filter and Configuration
@@ -42,8 +42,6 @@ public class LiveCaptureWithFilter {
     }
 
     public void run() throws PcapException {
-        NetPcap.activateLicense();
-
         String device = NetPcap.findAllDevs()
                 .stream()
                 .filter(d -> d.isUp() && !d.isLoopback())

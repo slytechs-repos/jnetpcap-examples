@@ -15,8 +15,8 @@
  */
 package com.slytechs.sdk.jnetpcap.examples;
 
-import com.slytechs.jnet.jnetpcap.api.NetPcap;
 import com.slytechs.sdk.jnetpcap.PcapException;
+import com.slytechs.sdk.jnetpcap.api.NetPcap;
 
 /**
  * Example 1: Basic Live Capture
@@ -42,7 +42,7 @@ public class BasicLiveCapture {
 	}
 
 	public void run() throws IllegalStateException, PcapException {
-
+		
 		// Use the first available network interface
 		String device = NetPcap.findAllDevs()
 				.stream()

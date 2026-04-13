@@ -24,7 +24,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.slytechs.jnet.jnetpcap.api.NetPcap;
+import com.slytechs.sdk.jnetpcap.api.NetPcap;
 import com.slytechs.sdk.protocol.core.Packet;
 import com.slytechs.sdk.protocol.core.PacketSettings;
 import com.slytechs.sdk.protocol.tcpip.ip.Ip4;
@@ -57,8 +57,6 @@ public class ProducerConsumer {
     }
 
     public void run() throws Exception {
-		NetPcap.activateLicense();
-
         String device = NetPcap.findAllDevs()
                 .stream()
                 .filter(d -> d.isUp() && !d.isLoopback())

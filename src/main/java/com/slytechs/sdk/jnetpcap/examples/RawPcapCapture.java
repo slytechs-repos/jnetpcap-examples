@@ -19,7 +19,6 @@ import java.lang.foreign.MemorySegment;
 import java.lang.foreign.ValueLayout;
 import java.time.Duration;
 
-import com.slytechs.jnet.jnetpcap.api.NetPcap;
 import com.slytechs.sdk.jnetpcap.Pcap;
 import com.slytechs.sdk.jnetpcap.PcapException;
 import com.slytechs.sdk.jnetpcap.PcapHeader;
@@ -48,8 +47,6 @@ public class RawPcapCapture {
 	}
 
 	public void run() throws PcapException {
-        NetPcap.activateLicense();
-
 		String device = Pcap.findAllDevs()
 				.stream()
 				.filter(d -> d.isUp() && !d.isLoopback())
@@ -142,7 +139,7 @@ public class RawPcapCapture {
 			srcMac.append(String.format("%02x", data.get(ValueLayout.JAVA_BYTE, i) & 0xFF));
 		}
 
-		// EtherType (bytes 12-13, big-endian)
+		// EtherTypes (bytes 12-13, big-endian)
 		int etherType = ((data.get(ValueLayout.JAVA_BYTE, 12) & 0xFF) << 8) |
 				(data.get(ValueLayout.JAVA_BYTE, 13) & 0xFF);
 

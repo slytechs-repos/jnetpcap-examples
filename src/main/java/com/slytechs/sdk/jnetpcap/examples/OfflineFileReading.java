@@ -15,8 +15,9 @@
  */
 package com.slytechs.sdk.jnetpcap.examples;
 
-import com.slytechs.jnet.jnetpcap.api.NetPcap;
+import com.slytechs.sdk.common.text.Detail;
 import com.slytechs.sdk.jnetpcap.PcapException;
+import com.slytechs.sdk.jnetpcap.api.NetPcap;
 
 /**
  * Example 3: Offline File Reading
@@ -40,8 +41,6 @@ public class OfflineFileReading {
     }
 
     public void run(String filename) throws PcapException {
-        NetPcap.activateLicense();
-
         System.out.printf("Reading file: %s%n", filename);
 
         long startTime = System.currentTimeMillis();
@@ -57,7 +56,7 @@ public class OfflineFileReading {
             // Process all packets (-1 = until EOF)
             final long[] stats = new long[2]; // [count, bytes]
             
-            pcap.loop(-1, packet -> {
+            pcap.loop(1, packet -> {
                 stats[0]++;
                 stats[1] += packet.captureLength();
 
@@ -65,6 +64,8 @@ public class OfflineFileReading {
                 if (stats[0] % 10000 == 0) {
                     System.out.printf("  Processed %d packets...%n", stats[0]);
                 }
+                
+                System.out.println(packet.toString(Detail.HIGH));
             });
 
             packetCount = (int) stats[0];

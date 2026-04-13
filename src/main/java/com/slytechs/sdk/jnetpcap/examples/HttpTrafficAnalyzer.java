@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.slytechs.jnet.jnetpcap.api.NetPcap;
 import com.slytechs.sdk.jnetpcap.PcapException;
+import com.slytechs.sdk.jnetpcap.api.NetPcap;
 import com.slytechs.sdk.protocol.core.PacketSettings;
 import com.slytechs.sdk.protocol.tcpip.ip.Ip4;
 import com.slytechs.sdk.protocol.tcpip.tcp.Tcp;
@@ -44,8 +44,6 @@ public class HttpTrafficAnalyzer {
 	}
 
 	public void run() throws PcapException {
-		NetPcap.activateLicense();
-
 		String device = NetPcap.findAllDevs()
 				.stream()
 				.filter(d -> d.isUp() && !d.isLoopback())
@@ -100,7 +98,7 @@ public class HttpTrafficAnalyzer {
 			// Filter for HTTP (80) and HTTPS (443) traffic
 			pcap.setFilter("tcp port 80 or tcp port 443");
 
-			pcap.loop(-1, packet -> {
+			pcap.loop(100, packet -> {
 				if (packet.hasHeader(ip4) && packet.hasHeader(tcp)) {
 					String srcIp = ip4.src().toString();
 					int srcPort = tcp.srcPort();

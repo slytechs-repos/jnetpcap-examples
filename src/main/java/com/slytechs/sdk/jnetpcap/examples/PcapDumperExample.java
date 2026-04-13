@@ -21,9 +21,9 @@ import java.lang.foreign.MemorySegment;
 import java.time.Duration;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import com.slytechs.jnet.jnetpcap.api.NetPcap;
 import com.slytechs.sdk.jnetpcap.PcapDumper;
 import com.slytechs.sdk.jnetpcap.PcapException;
+import com.slytechs.sdk.jnetpcap.api.NetPcap;
 import com.slytechs.sdk.jnetpcap.internal.PcapHeaderABI;
 import com.slytechs.sdk.protocol.core.PacketSettings;
 import com.slytechs.sdk.protocol.tcpip.ip.Ip4;
@@ -56,8 +56,6 @@ public class PcapDumperExample {
     }
 
     public void run() throws PcapException {
-        NetPcap.activateLicense();
-
         String device = NetPcap.findAllDevs()
                 .stream()
                 .filter(d -> d.isUp() && !d.isLoopback())
@@ -104,7 +102,7 @@ public class PcapDumperExample {
 
                         // Check for TCP SYN
                         if (packet.hasHeader(ip4) && packet.hasHeader(tcp)) {
-//                            if (tcp.isSyn() && !tcp.isAck()) {
+                            if (tcp.isSyn() && !tcp.isAck()) {
 
                                 // Convert packet descriptor to pcap header format
                                 var desc = packet.descriptor();
@@ -130,7 +128,7 @@ public class PcapDumperExample {
                                         count,
                                         ip4.src(), tcp.srcPort(),
                                         ip4.dst(), tcp.dstPort());
-//                            }
+                            }
                         }
                     });
                 }

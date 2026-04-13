@@ -62,8 +62,6 @@ public class PooledCapture {
     }
 
     public void run(String filename) throws PcapException {
-        NetPcap.activateLicense();
-
         System.out.printf("Pooled capture from: %s%n", filename);
         System.out.println();
 

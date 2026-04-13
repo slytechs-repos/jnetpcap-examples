@@ -56,8 +56,6 @@ public class PcapDumperExample {
     }
 
     public void run() throws PcapException {
-        NetPcap.activateLicense();
-
         String device = NetPcap.findAllDevs()
                 .stream()
                 .filter(d -> d.isUp() && !d.isLoopback())
@@ -104,7 +102,7 @@ public class PcapDumperExample {
 
                         // Check for TCP SYN
                         if (packet.hasHeader(ip4) && packet.hasHeader(tcp)) {
-//                            if (tcp.isSyn() && !tcp.isAck()) {
+                            if (tcp.isSyn() && !tcp.isAck()) {
 
                                 // Convert packet descriptor to pcap header format
                                 var desc = packet.descriptor();
@@ -130,7 +128,7 @@ public class PcapDumperExample {
                                         count,
                                         ip4.src(), tcp.srcPort(),
                                         ip4.dst(), tcp.dstPort());
-//                            }
+                            }
                         }
                     });
                 }

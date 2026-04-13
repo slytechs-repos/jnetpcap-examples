@@ -53,8 +53,6 @@ public class SelectivePersistence {
     }
 
     public void run(String filename) throws PcapException {
-        NetPcap.activateLicense();
-
         System.out.printf("Selective persistence from: %s%n", filename);
         System.out.println("Keeping only TCP SYN packets...");
         System.out.println();

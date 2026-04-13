@@ -44,8 +44,6 @@ public class HttpTrafficAnalyzer {
 	}
 
 	public void run() throws PcapException {
-		NetPcap.activateLicense();
-
 		String device = NetPcap.findAllDevs()
 				.stream()
 				.filter(d -> d.isUp() && !d.isLoopback())

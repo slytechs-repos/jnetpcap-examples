@@ -42,7 +42,7 @@ public class BasicLiveCapture {
 	}
 
 	public void run() throws IllegalStateException, PcapException {
-
+		
 		// Use the first available network interface
 		String device = NetPcap.findAllDevs()
 				.stream()

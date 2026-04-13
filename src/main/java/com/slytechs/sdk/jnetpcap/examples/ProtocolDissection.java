@@ -49,8 +49,6 @@ public class ProtocolDissection {
 
     public void run(String filename) throws PcapException {
     	
-    	NetPcap.activateLicense();
-    	
         System.out.printf("Dissecting packets from: %s%n", filename);
         System.out.println();
 

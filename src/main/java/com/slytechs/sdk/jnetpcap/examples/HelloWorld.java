@@ -23,12 +23,10 @@ import com.slytechs.sdk.protocol.tcpip.tcp.Tcp;
 public class HelloWorld {
 
 	public static void main(String[] args) throws PcapException {
-		NetPcap.activateLicense(); // Free community license
-
 		Ip4 ip4 = new Ip4();
 		Tcp tcp = new Tcp();
 
-		try (var pcap = NetPcap.openOffline("capture.pcap")) {
+		try (var pcap = NetPcap.openOffline("pcaps/capture.pcap")) {
 			pcap.loop(-1, packet -> {
 				if (packet.hasHeader(ip4) && packet.hasHeader(tcp)) {
 					System.out.printf("%s:%d → %s:%d%n",

@@ -57,8 +57,6 @@ public class ProducerConsumer {
     }
 
     public void run() throws Exception {
-		NetPcap.activateLicense();
-
         String device = NetPcap.findAllDevs()
                 .stream()
                 .filter(d -> d.isUp() && !d.isLoopback())

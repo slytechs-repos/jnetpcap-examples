@@ -41,8 +41,6 @@ public class OfflineFileReading {
     }
 
     public void run(String filename) throws PcapException {
-        NetPcap.activateLicense();
-
         System.out.printf("Reading file: %s%n", filename);
 
         long startTime = System.currentTimeMillis();

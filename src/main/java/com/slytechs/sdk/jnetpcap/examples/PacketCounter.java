@@ -48,8 +48,6 @@ public class PacketCounter {
     }
 
     public void run(String filename) throws PcapException {
-        NetPcap.activateLicense();
-
         System.out.printf("Counting protocols in: %s%n", filename);
 
         // Enable protocol dissection

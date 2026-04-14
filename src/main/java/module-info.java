@@ -49,5 +49,6 @@ module com.slytechs.jnetpcap.examples {
     requires com.slytechs.sdk.common;
     requires com.slytechs.sdk.protocol.core;
     requires com.slytechs.sdk.protocol.tcpip;
+	requires lexactivator;
 
 }

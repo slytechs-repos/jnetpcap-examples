@@ -346,7 +346,7 @@ The `pcaps/` directory includes sample captures:
 ## Resources
 
 - [jNetPcap SDK](https://github.com/slytechs-repos/jnetpcap-sdk) - Main SDK repository
-- [Javadocs](https://slytechs-repos.github.io/jnetpcap-api/) - API reference
+- [Javadocs](https://docs.jnetpcap.com) — API reference
 - [Sly Technologies](https://www.slytechs.com/) - Company website
 
 ---
